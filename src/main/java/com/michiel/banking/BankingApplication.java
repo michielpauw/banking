@@ -1,14 +1,13 @@
-package com.michiel.football;
+package com.michiel.banking;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 
-public class FootballApplication {
+public class BankingApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FootballApplication.class, args);
+		SpringApplication.run(BankingApplication.class, args);
 	}
-
 }
