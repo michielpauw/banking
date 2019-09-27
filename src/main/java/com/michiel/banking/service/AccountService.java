@@ -1,13 +1,16 @@
 package com.michiel.banking.service;
 
+import com.michiel.banking.ManualMapping.AccountMap;
 import com.michiel.banking.entity.AccountEntity;
-import com.michiel.banking.entity.AccountType;
+import com.michiel.banking.entity.BankEntity;
 import com.michiel.banking.entity.CustomerEntity;
 import com.michiel.banking.repository.AccountRepository;
+import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.repository.CustomerRepository;
 import com.michiel.banking.rest.AccountTypeFunctionalInterface;
 import com.michiel.banking.rest.IntegerFunctionalInterface;
-import java.util.ArrayList;
+import com.michiel.banking.rest.input.AccountInput;
+import com.michiel.banking.rest.type.Account;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,64 +25,96 @@ public class AccountService {
   AccountRepository accountRepository;
 
   @Autowired
+  BankRepository bankRepository;
+
+  @Autowired
   CustomerRepository customerRepository;
 
-  public AccountEntity saveAccount(AccountEntity accountEntity) {
-    return accountRepository.save(accountEntity);
+  public Iterable<Account> getAccounts() {
+    return AccountMap.transform(accountRepository.findAll());
   }
 
-  public Iterable<AccountEntity> saveAccounts(Iterable<AccountEntity> accounts) {
-    ArrayList<AccountEntity> savedAccounts = new ArrayList<AccountEntity>();
-    accounts.forEach(account -> savedAccounts.add(accountRepository.save(account)));
-    return savedAccounts;
-  }
-
-  public AccountEntity addCustomerToAccount(
-      long accountId,
-      long customerId)
-      throws NoSuchElementException
-  {
-    Optional<AccountEntity> accountOptional = accountRepository.findById(accountId);
-    Optional<CustomerEntity> customerOptional = customerRepository.findById(customerId);
-    if (accountOptional.isPresent() && customerOptional.isPresent()) {
-      AccountEntity account = accountOptional.get();
-      ArrayList customers = new ArrayList(account.getCustomers());
-      customers.add(customerOptional.get());
-      account.setCustomers(customers);
-      return accountRepository.save(account);
-    } else {
-      throw new NoSuchElementException();
-    }
-  }
-
-  public Iterable<AccountEntity> getAccounts() {
-    return accountRepository.findAll();
-  }
-
-  public AccountEntity getAccountById(long Id) throws NoSuchElementException {
-    Optional<AccountEntity> accountEntity = accountRepository.findById(Id);
+  public Account getAccountById(long id) throws NoSuchElementException {
+    Optional<AccountEntity> accountEntity = accountRepository.findById(id);
     if (accountEntity.isPresent()) {
-      return accountEntity.get();
+      return AccountMap.transform(accountEntity.get());
     } else {
       throw new NoSuchElementException();
     }
   }
 
-  public Iterable<AccountEntity> filterAccountsByType(AccountType type) {
-    Iterable<AccountEntity> accounts = getAccounts();
-    return StreamSupport.stream(accounts.spliterator(), false)
-            .filter(account -> account.getAccountType() == type)
-            .collect(Collectors.toList());
-  }
-
-  public Iterable<AccountEntity> getFilteredAccounts(
+  public Iterable<Account> getFilteredAccounts(
       IntegerFunctionalInterface integerFilter,
       AccountTypeFunctionalInterface typeFilter
   ) {
-    Iterable<AccountEntity> accounts = getAccounts();
+    Iterable<Account> accounts = getAccounts();
     return StreamSupport.stream(accounts.spliterator(), false)
         .filter(account -> integerFilter.integerFilter(account.getBalance()))
-        .filter(account -> typeFilter.typeFilter(account.getAccountType()))
+        .filter(account -> typeFilter.typeFilter(account.getType()))
         .collect(Collectors.toList());
+  }
+
+  public Account addBankToAccount(
+      long accountId,
+      long bankId)
+      throws NoSuchElementException
+  {
+    Optional<AccountEntity> accountOptional = accountRepository.findById(accountId);
+    Optional<BankEntity> bankOptional = bankRepository.findById(bankId);
+    if (accountOptional.isPresent() && bankOptional.isPresent()) {
+      AccountEntity account = accountOptional.get();
+      account.setBank(bankOptional.get());
+      return AccountMap.transform(accountRepository.save(account));
+    } else {
+      throw new NoSuchElementException();
+    }
+  }
+
+  public Account transferToAccount(long id, long amount) {
+    if (amount < 0) {
+      throw new IllegalArgumentException();
+    }
+    Optional<AccountEntity> accountOptional = accountRepository.findById(id);
+    if (accountOptional.isPresent()) {
+      AccountEntity account = accountOptional.get();
+      account.setBalance(account.getBalance() + amount);
+      return AccountMap.transform(accountRepository.save(account));
+    } else {
+      throw new NoSuchElementException();
+    }
+  }
+
+  public Account createAccountForCustomerAtBank(
+      long customerId,
+      long bankId,
+      AccountInput input)
+      throws NoSuchElementException
+  {
+    Optional<BankEntity> bankOptional = bankRepository.findById(bankId);
+    Optional<CustomerEntity> customerOptional = customerRepository.findById(customerId);
+    if (bankOptional.isPresent() && customerOptional.isPresent()) {
+      CustomerEntity customer = customerOptional.get();
+      AccountEntity accountEntity = accountRepository.save(AccountMap.transform(input));
+      accountEntity.setBank(bankOptional.get());
+      customer.getAccounts().add(accountEntity);
+      return AccountMap.transform(accountRepository.save(accountEntity));
+    } else {
+      throw new NoSuchElementException();
+    }
+  }
+
+  public Account transferFromAccont(long id, long amount, long userId) {
+    Optional<AccountEntity> accountOptional = accountRepository.findById(id);
+    if (accountOptional.isPresent()) {
+      AccountEntity account = accountOptional.get();
+      if (account.getIds().contains(userId) && account.getBalance() >= amount) {
+        account.setBalance(account.getBalance() - amount);
+      } else {
+        throw new IllegalArgumentException();
+      }
+      return AccountMap.transform(accountRepository.save(account));
+    } else {
+      throw new NoSuchElementException();
+    }
   }
 }

@@ -7,14 +7,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "CUSTOMER")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class CustomerEntity {
   @Id
   @GeneratedValue(generator = "increment")
@@ -27,6 +30,6 @@ public class CustomerEntity {
       inverseJoinColumns = @JoinColumn(name = "account_id"))
   private List<AccountEntity> accounts;
 
-  @OneToMany(mappedBy = "customer")
-  private List<DeviceEntity> devices;
+  private String name;
+  private int age;
 }
