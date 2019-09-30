@@ -1,8 +1,8 @@
 package com.michiel.banking.rest.endpoints;
 
 import com.michiel.banking.entity.AccountType;
-import com.michiel.banking.rest.AccountTypeFunctionalInterface;
-import com.michiel.banking.rest.IntegerFunctionalInterface;
+import com.michiel.banking.rest.filter.AccountTypeFunctionalInterface;
+import com.michiel.banking.rest.filter.IntegerFunctionalInterface;
 import com.michiel.banking.rest.input.AccountInput;
 import com.michiel.banking.rest.input.NewAccountInput;
 import com.michiel.banking.rest.type.Account;

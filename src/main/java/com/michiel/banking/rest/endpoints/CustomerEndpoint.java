@@ -32,10 +32,10 @@ public class CustomerEndpoint {
     return customerService.saveCustomers(input);
   }
 
-  @PostMapping("/{customer_id}/add_account/{account_id}")
+  @PostMapping("/{customer-id}/add_account/{account-id}")
   public Customer addAccountToCustomer(
-      @PathVariable(name="customer_id") long customerId,
-      @PathVariable(name="account_id") long accountId,
+      @PathVariable(name="customer-id") long customerId,
+      @PathVariable(name="account-id") long accountId,
       HttpServletResponse response) {
     try {
       response.setStatus(HttpServletResponse.SC_OK);
@@ -46,10 +46,10 @@ public class CustomerEndpoint {
     }
   }
 
-  @PostMapping("/{customer_id}/create_account/{bank_id}")
+  @PostMapping("/{customer-id}/create_account/{bank-id}")
   public Customer createAccountForCustomerAtBank(
-      @PathVariable(name="customer_id") long customerId,
-      @PathVariable(name="bank_id") long bankId,
+      @PathVariable(name="customer-id") long customerId,
+      @PathVariable(name="bank-id") long bankId,
       @Valid @RequestBody AccountInput input,
       HttpServletResponse response) {
     try {

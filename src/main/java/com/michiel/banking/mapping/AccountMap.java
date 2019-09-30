@@ -4,6 +4,7 @@ import com.michiel.banking.entity.AccountEntity;
 import com.michiel.banking.rest.input.AccountInput;
 import com.michiel.banking.rest.type.Account;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AccountMap {
@@ -17,6 +18,7 @@ public class AccountMap {
     if (entity.getCustomers() != null) {
       List<Long> customerIds = new ArrayList<>();
       entity.getCustomers().forEach(customer -> customerIds.add(customer.getId()));
+      Collections.sort(customerIds);
       account.setCustomerIds(customerIds);
     }
     return account;
