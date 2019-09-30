@@ -4,6 +4,7 @@ import com.michiel.banking.entity.AccountType;
 import com.michiel.banking.rest.AccountTypeFunctionalInterface;
 import com.michiel.banking.rest.IntegerFunctionalInterface;
 import com.michiel.banking.rest.input.AccountInput;
+import com.michiel.banking.rest.input.NewAccountInput;
 import com.michiel.banking.rest.type.Account;
 import com.michiel.banking.service.AccountService;
 import java.util.NoSuchElementException;
@@ -61,6 +62,19 @@ public class AccountEndpoint {
   public String fallbackMethod(HttpServletResponse response) {
     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     return "Not a valid request.";
+  }
+
+  @PostMapping("/new-account")
+  public Account newAccount(
+      @Valid @RequestBody NewAccountInput input,
+      HttpServletResponse response) {
+    try {
+      response.setStatus(HttpServletResponse.SC_OK);
+      return accountService.newAccount(input);
+    } catch (NoSuchElementException e) {
+      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      return null;
+    }
   }
 
   @PostMapping("/{account-id}/change_bank/{bank-id}")

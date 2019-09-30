@@ -1,16 +1,19 @@
 package com.michiel.banking.service;
 
-import com.michiel.banking.mapping.AccountMap;
 import com.michiel.banking.entity.AccountEntity;
 import com.michiel.banking.entity.BankEntity;
 import com.michiel.banking.entity.CustomerEntity;
+import com.michiel.banking.mapping.AccountMap;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.repository.CustomerRepository;
 import com.michiel.banking.rest.AccountTypeFunctionalInterface;
 import com.michiel.banking.rest.IntegerFunctionalInterface;
 import com.michiel.banking.rest.input.AccountInput;
+import com.michiel.banking.rest.input.NewAccountInput;
 import com.michiel.banking.rest.type.Account;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,6 +68,36 @@ public class AccountService {
       AccountEntity account = accountOptional.get();
       account.setBank(bankOptional.get());
       return AccountMap.transform(accountRepository.save(account));
+    } else {
+      throw new NoSuchElementException();
+    }
+  }
+
+  public AccountEntity addCustomerToAccount(AccountEntity account, CustomerEntity customer) {
+    List<CustomerEntity> customers = account.getCustomers();
+    if (customers != null) {
+      customers.add(customer);
+    }
+    else {
+      customers = new ArrayList<>();
+      customers.add(customer);
+    }
+    accountRepository.save(account);
+    return  account;
+  }
+
+  public Account newAccount(NewAccountInput input) throws NoSuchElementException
+  {
+    Optional<BankEntity> bankOptional = bankRepository.findById(input.getBankId());
+    Optional<CustomerEntity> customerOptional = customerRepository.findById(input.getCustomerId());
+    if (bankOptional.isPresent() && customerOptional.isPresent()) {
+      CustomerEntity customer = customerOptional.get();
+      AccountEntity accountEntity = new AccountEntity();
+      accountEntity.setBank(bankOptional.get());
+      accountEntity.setType(input.getType());
+      accountEntity = addCustomerToAccount(accountEntity, customer);
+      customer.getAccounts().add(accountEntity);
+      return AccountMap.transform(accountRepository.save(accountEntity));
     } else {
       throw new NoSuchElementException();
     }

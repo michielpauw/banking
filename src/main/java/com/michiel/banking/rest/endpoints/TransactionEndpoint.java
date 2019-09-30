@@ -3,6 +3,8 @@ package com.michiel.banking.rest.endpoints;
 import com.michiel.banking.rest.input.TransactionInput;
 import com.michiel.banking.rest.type.Transaction;
 import com.michiel.banking.service.TransactionService;
+import java.util.NoSuchElementException;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +21,13 @@ public class TransactionEndpoint {
   TransactionService transactionService;
 
   @PostMapping
-  public Transaction saveTransaction(@Valid @RequestBody TransactionInput input){
-    return transactionService.handleTransaction(input);
+  public Transaction saveTransaction(@Valid @RequestBody TransactionInput input, HttpServletResponse response) {
+    try {
+      return transactionService.handleTransaction(input);
+    } catch(NoSuchElementException e) {
+      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+      return null;
+    }
   }
 
   @GetMapping
