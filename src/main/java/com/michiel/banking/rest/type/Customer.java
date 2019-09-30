@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -22,7 +21,6 @@ public class Customer {
   Long id;
 
   @JsonProperty("name")
-  @NotNull
   String name;
 
   @JsonProperty("age")

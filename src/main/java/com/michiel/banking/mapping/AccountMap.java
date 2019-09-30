@@ -1,4 +1,4 @@
-package com.michiel.banking.ManualMapping;
+package com.michiel.banking.mapping;
 
 import com.michiel.banking.entity.AccountEntity;
 import com.michiel.banking.rest.input.AccountInput;

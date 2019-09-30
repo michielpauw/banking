@@ -8,16 +8,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "ACCOUNT")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class AccountEntity {
   @Id
@@ -31,6 +30,12 @@ public class AccountEntity {
   @ManyToOne
   @JoinColumn(name = "bank_id")
   private BankEntity bank;
+
+  @OneToMany(mappedBy = "toAccount")
+  private List<TransactionEntity> transactionsTo;
+
+  @OneToMany(mappedBy = "fromAccount")
+  private List<TransactionEntity> transactionsFrom;
 
   private long balance;
   private AccountType type;

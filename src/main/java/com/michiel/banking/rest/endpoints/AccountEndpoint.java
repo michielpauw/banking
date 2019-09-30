@@ -57,39 +57,6 @@ public class AccountEndpoint {
     return accountService.getFilteredAccounts(integerFilter, typeFilter);
   }
 
-  @PostMapping("{id}/transfer_to/{amount}")
-  public Account transferToAccount(@PathVariable(name = "id") long id,
-      @PathVariable(name = "amount") long amount, HttpServletResponse response) {
-    try {
-      response.setStatus(HttpServletResponse.SC_OK);
-      return accountService.transferToAccount(id, amount);
-    } catch (NoSuchElementException e) {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      return null;
-    } catch (IllegalArgumentException e) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return null;
-    }
-  }
-
-  @PostMapping("{id}/transfer_from/{amount}")
-  public Account transferFromAccount(
-      @PathVariable(name = "id") long id,
-      @PathVariable(name = "amount") long amount,
-      @RequestParam(value = "user-id") long userId,
-      HttpServletResponse response) {
-    try {
-      response.setStatus(HttpServletResponse.SC_OK);
-      return accountService.transferFromAccont(id, amount, userId);
-    } catch (NoSuchElementException e) {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      return null;
-    } catch (IllegalArgumentException e) {
-      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-      return null;
-    }
-  }
-
   @RequestMapping("*")
   public String fallbackMethod(HttpServletResponse response) {
     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

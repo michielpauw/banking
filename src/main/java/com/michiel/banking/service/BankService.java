@@ -1,6 +1,6 @@
 package com.michiel.banking.service;
 
-import com.michiel.banking.ManualMapping.BankMap;
+import com.michiel.banking.mapping.BankMap;
 import com.michiel.banking.entity.BankEntity;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.rest.input.BankInput;

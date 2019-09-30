@@ -1,7 +1,7 @@
 package com.michiel.banking.service;
 
-import com.michiel.banking.ManualMapping.AccountMap;
-import com.michiel.banking.ManualMapping.CustomerMap;
+import com.michiel.banking.mapping.AccountMap;
+import com.michiel.banking.mapping.CustomerMap;
 import com.michiel.banking.entity.AccountEntity;
 import com.michiel.banking.entity.BankEntity;
 import com.michiel.banking.entity.CustomerEntity;

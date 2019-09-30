@@ -1,6 +1,6 @@
 package com.michiel.banking.service;
 
-import com.michiel.banking.ManualMapping.AccountMap;
+import com.michiel.banking.mapping.AccountMap;
 import com.michiel.banking.entity.AccountEntity;
 import com.michiel.banking.entity.BankEntity;
 import com.michiel.banking.entity.CustomerEntity;
@@ -70,20 +70,6 @@ public class AccountService {
     }
   }
 
-  public Account transferToAccount(long id, long amount) {
-    if (amount < 0) {
-      throw new IllegalArgumentException();
-    }
-    Optional<AccountEntity> accountOptional = accountRepository.findById(id);
-    if (accountOptional.isPresent()) {
-      AccountEntity account = accountOptional.get();
-      account.setBalance(account.getBalance() + amount);
-      return AccountMap.transform(accountRepository.save(account));
-    } else {
-      throw new NoSuchElementException();
-    }
-  }
-
   public Account createAccountForCustomerAtBank(
       long customerId,
       long bankId,
@@ -98,21 +84,6 @@ public class AccountService {
       accountEntity.setBank(bankOptional.get());
       customer.getAccounts().add(accountEntity);
       return AccountMap.transform(accountRepository.save(accountEntity));
-    } else {
-      throw new NoSuchElementException();
-    }
-  }
-
-  public Account transferFromAccont(long id, long amount, long userId) {
-    Optional<AccountEntity> accountOptional = accountRepository.findById(id);
-    if (accountOptional.isPresent()) {
-      AccountEntity account = accountOptional.get();
-      if (account.getIds().contains(userId) && account.getBalance() >= amount) {
-        account.setBalance(account.getBalance() - amount);
-      } else {
-        throw new IllegalArgumentException();
-      }
-      return AccountMap.transform(accountRepository.save(account));
     } else {
       throw new NoSuchElementException();
     }
