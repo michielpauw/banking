@@ -2,7 +2,7 @@ package com.michiel.banking.rest.endpoints;
 
 import com.michiel.banking.rest.input.BankInput;
 import com.michiel.banking.rest.type.Bank;
-import com.michiel.banking.service.BankService;
+import com.michiel.banking.service.impl.BankServiceImpl;
 import java.util.NoSuchElementException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BankEndpoint {
 
   @Autowired
-  private BankService bankService;
+  private BankServiceImpl bankService;
 
   @PostMapping
   public Bank saveBank(@Valid @RequestBody BankInput input) {

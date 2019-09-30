@@ -4,7 +4,7 @@ import com.michiel.banking.entity.AccountType;
 import com.michiel.banking.rest.input.AccountInput;
 import com.michiel.banking.rest.input.NewAccountInput;
 import com.michiel.banking.rest.type.Account;
-import com.michiel.banking.service.AccountService;
+import com.michiel.banking.service.impl.AccountServiceImpl;
 import java.util.NoSuchElementException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountEndpoint {
 
   @Autowired
-  AccountService accountService;
+  AccountServiceImpl accountService;
 
   @GetMapping("/{id}")
   public Account getAccountById(@PathVariable(name = "id") long id, HttpServletResponse response) {
@@ -58,7 +58,7 @@ public class AccountEndpoint {
       HttpServletResponse response) {
     try {
       response.setStatus(HttpServletResponse.SC_OK);
-      return accountService.newAccount(input);
+      return accountService.addAccount(input);
     } catch (NoSuchElementException e) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       return null;

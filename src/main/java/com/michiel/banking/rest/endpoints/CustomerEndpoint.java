@@ -3,7 +3,7 @@ package com.michiel.banking.rest.endpoints;
 import com.michiel.banking.rest.input.AccountInput;
 import com.michiel.banking.rest.input.CustomerInput;
 import com.michiel.banking.rest.type.Customer;
-import com.michiel.banking.service.CustomerService;
+import com.michiel.banking.service.impl.CustomerServiceImpl;
 import java.util.NoSuchElementException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerEndpoint {
 
   @Autowired
-  CustomerService customerService;
+  CustomerServiceImpl customerService;
 
   @PostMapping
   public Customer saveCustomer(@Valid @RequestBody CustomerInput input){

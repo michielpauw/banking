@@ -2,7 +2,7 @@ package com.michiel.banking.rest.endpoints;
 
 import com.michiel.banking.rest.input.TransactionInput;
 import com.michiel.banking.rest.type.Transaction;
-import com.michiel.banking.service.TransactionService;
+import com.michiel.banking.service.impl.TransactionServiceImpl;
 import java.util.NoSuchElementException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TransactionEndpoint {
 
   @Autowired
-  TransactionService transactionService;
+  TransactionServiceImpl transactionService;
 
   @PostMapping
   public Transaction saveTransaction(@Valid @RequestBody TransactionInput input, HttpServletResponse response) {
