@@ -1,8 +1,6 @@
 package com.michiel.banking.rest.endpoints;
 
 import com.michiel.banking.entity.AccountType;
-import com.michiel.banking.rest.filter.AccountTypeFunctionalInterface;
-import com.michiel.banking.rest.filter.IntegerFunctionalInterface;
 import com.michiel.banking.rest.input.AccountInput;
 import com.michiel.banking.rest.input.NewAccountInput;
 import com.michiel.banking.rest.type.Account;
@@ -43,19 +41,9 @@ public class AccountEndpoint {
       @RequestParam(value = "balance-max", required = false) Long maximum,
       @RequestParam(value = "type", required = false) AccountType type
   ) {
-    IntegerFunctionalInterface integerFilter = (long x) -> true;
-    AccountTypeFunctionalInterface typeFilter = (AccountType account) -> true;
-    if (type != null) {
-      typeFilter = (AccountType account) -> type == account;
-    }
-    if (minimum != null && maximum != null) {
-      integerFilter = (long x) -> x >= minimum && x <= maximum;
-    } else if (minimum != null) {
-      integerFilter = (long x) -> x >= minimum;
-    } else if (maximum != null) {
-      integerFilter = (long x) -> x <= maximum;
-    }
-    return accountService.getFilteredAccounts(integerFilter, typeFilter);
+    return accountService.getAccounts(minimum, maximum, type);
+
+
   }
 
   @RequestMapping("*")

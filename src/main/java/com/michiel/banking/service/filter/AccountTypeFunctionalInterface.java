@@ -1,4 +1,4 @@
-package com.michiel.banking.rest.filter;
+package com.michiel.banking.service.filter;
 
 import com.michiel.banking.entity.AccountType;
 

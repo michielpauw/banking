@@ -1,14 +1,15 @@
 package com.michiel.banking.service;
 
 import com.michiel.banking.entity.AccountEntity;
+import com.michiel.banking.entity.AccountType;
 import com.michiel.banking.entity.BankEntity;
 import com.michiel.banking.entity.CustomerEntity;
 import com.michiel.banking.mapping.AccountMap;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.repository.CustomerRepository;
-import com.michiel.banking.rest.filter.AccountTypeFunctionalInterface;
-import com.michiel.banking.rest.filter.IntegerFunctionalInterface;
+import com.michiel.banking.service.filter.AccountTypeFunctionalInterface;
+import com.michiel.banking.service.filter.IntegerFunctionalInterface;
 import com.michiel.banking.rest.input.AccountInput;
 import com.michiel.banking.rest.input.NewAccountInput;
 import com.michiel.banking.rest.type.Account;
@@ -46,10 +47,27 @@ public class AccountService {
     }
   }
 
+  public Iterable<Account> getAccounts(Long minimum, Long maximum, AccountType type) {
+    IntegerFunctionalInterface integerFilter = (long x) -> true;
+    AccountTypeFunctionalInterface typeFilter = (AccountType account) -> true;
+    if (type != null) {
+      typeFilter = (AccountType account) -> type == account;
+    }
+    if (minimum != null && maximum != null) {
+      integerFilter = (long x) -> x >= minimum && x <= maximum;
+    } else if (minimum != null) {
+      integerFilter = (long x) -> x >= minimum;
+    } else if (maximum != null) {
+      integerFilter = (long x) -> x <= maximum;
+    }
+    return getFilteredAccounts(integerFilter, typeFilter);
+  }
+
   public Iterable<Account> getFilteredAccounts(
       IntegerFunctionalInterface integerFilter,
       AccountTypeFunctionalInterface typeFilter
   ) {
+
     Iterable<Account> accounts = getAccounts();
     return StreamSupport.stream(accounts.spliterator(), false)
         .filter(account -> integerFilter.integerFilter(account.getBalance()))

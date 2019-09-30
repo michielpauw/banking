@@ -1,4 +1,4 @@
-package com.michiel.banking.rest.filter;
+package com.michiel.banking.service.filter;
 
 @FunctionalInterface
 public interface IntegerFunctionalInterface {
