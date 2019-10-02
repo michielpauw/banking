@@ -1,6 +1,5 @@
 package com.michiel.banking.rest.endpoints;
 
-import com.michiel.banking.rest.input.AccountInput;
 import com.michiel.banking.rest.input.CustomerInput;
 import com.michiel.banking.rest.type.Customer;
 import com.michiel.banking.service.impl.CustomerServiceImpl;
@@ -40,21 +39,6 @@ public class CustomerEndpoint {
     try {
       response.setStatus(HttpServletResponse.SC_OK);
       return customerService.addAccountToCustomer(customerId, accountId);
-    } catch (NoSuchElementException e) {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      return null;
-    }
-  }
-
-  @PostMapping("/{customer-id}/create_account/{bank-id}")
-  public Customer createAccountForCustomerAtBank(
-      @PathVariable(name="customer-id") long customerId,
-      @PathVariable(name="bank-id") long bankId,
-      @Valid @RequestBody AccountInput input,
-      HttpServletResponse response) {
-    try {
-      response.setStatus(HttpServletResponse.SC_OK);
-      return customerService.createAccountForCustomerAtBank(customerId, bankId, input);
     } catch (NoSuchElementException e) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       return null;

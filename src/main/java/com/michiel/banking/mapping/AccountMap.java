@@ -12,7 +12,10 @@ public class AccountMap {
   public static Account transform(AccountEntity entity) {
     Account account = new Account();
     account.setBalance(entity.getBalance());
-    account.setBank(entity.getBank().getName());
+    account.setBank("[NO BANK ENTERED]");
+    if (entity.getBank() != null) {
+      account.setBank(entity.getBank().getName());
+    }
     account.setId(entity.getId());
     account.setType(entity.getType());
     if (entity.getCustomers() != null) {

@@ -1,6 +1,5 @@
 package com.michiel.banking.service;
 
-import com.michiel.banking.rest.input.AccountInput;
 import com.michiel.banking.rest.input.CustomerInput;
 import com.michiel.banking.rest.type.Customer;
 import java.util.List;
@@ -11,6 +10,5 @@ public interface CustomerService {
   List<Customer> saveCustomers(Iterable<CustomerInput> input);
   Iterable<Customer> getCustomers();
   Customer addAccountToCustomer(long customerId, long accountId) throws NoSuchElementException;
-  Customer createAccountForCustomerAtBank(long customerId, long bankId, AccountInput input) throws NoSuchElementException;
   Customer getCustomerById(long id) throws NoSuchElementException;
 }

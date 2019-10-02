@@ -1,7 +1,6 @@
 package com.michiel.banking.rest.endpoints;
 
 import com.michiel.banking.entity.AccountType;
-import com.michiel.banking.rest.input.AccountInput;
 import com.michiel.banking.rest.input.NewAccountInput;
 import com.michiel.banking.rest.type.Account;
 import com.michiel.banking.service.impl.AccountServiceImpl;
@@ -59,35 +58,6 @@ public class AccountEndpoint {
     try {
       response.setStatus(HttpServletResponse.SC_OK);
       return accountService.addAccount(input);
-    } catch (NoSuchElementException e) {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      return null;
-    }
-  }
-
-  @PostMapping("/{account-id}/change_bank/{bank-id}")
-  public Account addBankToAccount(
-      @PathVariable(name = "account-id") long accountId,
-      @PathVariable(name = "bank-id") long bankId,
-      HttpServletResponse response) {
-    try {
-      response.setStatus(HttpServletResponse.SC_OK);
-      return accountService.addBankToAccount(accountId, bankId);
-    } catch (NoSuchElementException e) {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      return null;
-    }
-  }
-
-  @PostMapping("/create/{customer-id}/{bank-id}")
-  public Account createAccountForCustomerAtBank(
-      @PathVariable(name="customer-id") long customerId,
-      @PathVariable(name="bank-id") long bankId,
-      @Valid @RequestBody AccountInput input,
-      HttpServletResponse response) {
-    try {
-      response.setStatus(HttpServletResponse.SC_OK);
-      return accountService.createAccountForCustomerAtBank(customerId, bankId, input);
     } catch (NoSuchElementException e) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       return null;

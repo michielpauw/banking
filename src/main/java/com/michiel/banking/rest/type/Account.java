@@ -1,6 +1,5 @@
 package com.michiel.banking.rest.type;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,7 +14,8 @@ import lombok.Data;
     "customer-ids",
     "balance",
     "type",
-    "bank"
+    "bank",
+    "bank-id"
 })
 @JsonInclude(Include.NON_NULL)
 public class Account {
@@ -33,6 +33,8 @@ public class Account {
   AccountType type;
 
   @JsonProperty("bank")
-  @JsonIgnoreProperties({"accounts"})
   String bank;
+
+  @JsonProperty("bank-id")
+  Long bankId;
 }

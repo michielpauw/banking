@@ -1,14 +1,11 @@
 package com.michiel.banking.service.impl;
 
-import com.michiel.banking.mapping.AccountMap;
-import com.michiel.banking.mapping.CustomerMap;
 import com.michiel.banking.entity.AccountEntity;
-import com.michiel.banking.entity.BankEntity;
 import com.michiel.banking.entity.CustomerEntity;
+import com.michiel.banking.mapping.CustomerMap;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.repository.CustomerRepository;
-import com.michiel.banking.rest.input.AccountInput;
 import com.michiel.banking.rest.input.CustomerInput;
 import com.michiel.banking.rest.type.Customer;
 import com.michiel.banking.service.CustomerService;
@@ -58,25 +55,6 @@ public class CustomerServiceImpl implements CustomerService {
         return CustomerMap.transform(customer);
       }
       customer.getAccounts().add(accountOptional.get());
-      return CustomerMap.transform(customerRepository.save(customer));
-    } else {
-      throw new NoSuchElementException();
-    }
-  }
-
-  public Customer createAccountForCustomerAtBank(
-      long customerId,
-      long bankId,
-      AccountInput input)
-      throws NoSuchElementException
-  {
-    Optional<BankEntity> bankOptional = bankRepository.findById(bankId);
-    Optional<CustomerEntity> customerOptional = customerRepository.findById(customerId);
-    if (bankOptional.isPresent() && customerOptional.isPresent()) {
-      CustomerEntity customer = customerOptional.get();
-      AccountEntity accountEntity = accountRepository.save(AccountMap.transform(input));
-      accountEntity.setBank(bankOptional.get());
-      customer.getAccounts().add(accountEntity);
       return CustomerMap.transform(customerRepository.save(customer));
     } else {
       throw new NoSuchElementException();
