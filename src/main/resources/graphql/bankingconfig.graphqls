@@ -1,0 +1,40 @@
+type Query {
+}
+
+type Account {
+    id: ID!
+    customers: [Customer!]!
+    balance: Int!
+    transactionsTo: [Transaction!]!
+    transactionsFrom: [Transaction!]!
+    type: AccountType
+}
+
+enum AccountType {
+    CHECKING, SAVING, INVESTMENT, CHILD
+}
+
+type Customer {
+    id: ID!
+    accounts: [Account!]!
+    name: String!
+    age: Int!
+}
+
+type Transaction {
+    id: ID!
+    fromAccount: Account!
+    toAccount: Account!
+    amount: Int!
+    type: TransactionType!
+}
+
+enum TransactionType {
+    DEPOSIT, TRANSFER
+}
+
+type Bank {
+    id: ID!
+    accounts: [Account!]!
+    name: String!
+}
