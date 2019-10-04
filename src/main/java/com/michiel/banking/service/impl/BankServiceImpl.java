@@ -11,14 +11,16 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class BankServiceImpl implements BankService {
 
   @Autowired
   private BankRepository bankRepository;
 
-  public Bank saveBank(BankInput input) {
+  public Bank addBank(BankInput input) {
     List<BankEntity> bankEntities = bankRepository.findByNameIgnoreCase(input.getName());
     BankEntity bankEntity;
     if (bankEntities.size() == 0) {

@@ -2,6 +2,7 @@ package com.michiel.banking.rest.type;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.michiel.banking.entity.TransactionType;
 import lombok.Data;
 
 @Data
@@ -27,7 +28,7 @@ public class Transaction {
   Long amount;
 
   @JsonProperty("type")
-  String type;
+  TransactionType type;
 
   @JsonProperty("success")
   Boolean success;

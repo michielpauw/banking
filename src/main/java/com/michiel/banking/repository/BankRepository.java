@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BankRepository extends CrudRepository<BankEntity, Long> {
-  public List<BankEntity> findByNameIgnoreCase(String name);
+  List<BankEntity> findByNameIgnoreCase(String name);
 }

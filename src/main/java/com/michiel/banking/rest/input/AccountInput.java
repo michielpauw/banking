@@ -8,11 +8,20 @@ import lombok.Data;
 
 @Data
 @JsonPropertyOrder({
-    "bank",
+    "customer-id",
+    "bank-id",
     "type"
 })
 public class AccountInput {
   @JsonProperty(value = "type")
   @NotNull
   AccountType type;
+
+  @JsonProperty(value = "customer-id")
+  @NotNull
+  Long customerId;
+
+  @JsonProperty(value = "bank-id")
+  @NotNull
+  Long bankId;
 }

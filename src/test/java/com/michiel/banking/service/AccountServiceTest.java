@@ -11,7 +11,7 @@ import com.michiel.banking.entity.CustomerEntity;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.repository.CustomerRepository;
-import com.michiel.banking.rest.input.NewAccountInput;
+import com.michiel.banking.rest.input.AccountInput;
 import com.michiel.banking.rest.type.Account;
 import com.michiel.banking.service.impl.AccountServiceImpl;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class AccountServiceTest {
   private CustomerEntity customerEntity;
 
   @Mock
-  private NewAccountInput newAccountInput;
+  private AccountInput accountInput;
 
   @Rule
   public ExpectedException thrown = ExpectedException.none();
@@ -73,7 +73,7 @@ public class AccountServiceTest {
   public void addAccountShouldThrowExceptionIfNoBankWithIdFound() {
     Mockito.when(this.bankRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
     thrown.expect(NoSuchElementException.class);
-    this.accountService.addAccount(newAccountInput);
+    this.accountService.addAccount(accountInput);
   }
 
   @Test
@@ -81,7 +81,7 @@ public class AccountServiceTest {
     Mockito.when(this.accountRepository.save(Mockito.any(AccountEntity.class))).thenReturn(accountEntity);
     Mockito.when(this.bankRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(bankEntity));
     Mockito.when(this.customerRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(customerEntity));
-    final Account account = this.accountService.addAccount(newAccountInput);
+    final Account account = this.accountService.addAccount(accountInput);
     assertNotNull(account);
     assertNotNull(account.getId());
   }

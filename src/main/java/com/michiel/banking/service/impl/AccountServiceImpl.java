@@ -8,7 +8,7 @@ import com.michiel.banking.mapping.AccountMap;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.repository.CustomerRepository;
-import com.michiel.banking.rest.input.NewAccountInput;
+import com.michiel.banking.rest.input.AccountInput;
 import com.michiel.banking.rest.type.Account;
 import com.michiel.banking.service.AccountService;
 import com.michiel.banking.service.filter.AccountTypeFunctionalInterface;
@@ -21,18 +21,20 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class AccountServiceImpl implements AccountService {
 
   @Autowired
-  AccountRepository accountRepository;
+  private AccountRepository accountRepository;
 
   @Autowired
-  BankRepository bankRepository;
+  private BankRepository bankRepository;
 
   @Autowired
-  CustomerRepository customerRepository;
+  private CustomerRepository customerRepository;
 
   public Iterable<Account> getAccounts() {
     return AccountMap.transform(accountRepository.findAll());
@@ -95,7 +97,7 @@ public class AccountServiceImpl implements AccountService {
     return  account;
   }
 
-  public Account addAccount(NewAccountInput input) throws NoSuchElementException
+  public Account addAccount(AccountInput input) throws NoSuchElementException
   {
     Optional<BankEntity> bankOptional = bankRepository.findById(input.getBankId());
     Optional<CustomerEntity> customerOptional = customerRepository.findById(input.getCustomerId());
@@ -110,4 +112,9 @@ public class AccountServiceImpl implements AccountService {
       throw new NoSuchElementException();
     }
   }
+
+  public List<Long> getCustomerIds(long id) {
+    return accountRepository.findByCustomerId(id);
+  }
+
 }

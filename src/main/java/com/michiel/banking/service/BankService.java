@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 
 public interface BankService {
 
-  public Bank saveBank(BankInput input);
+  public Bank addBank(BankInput input);
   Iterable<Bank> getBanks();
   Bank getBankById(long id) throws NoSuchElementException;
 }

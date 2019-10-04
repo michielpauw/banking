@@ -9,9 +9,9 @@ import java.util.List;
 public class BankMap {
 
   public static Bank transform(BankEntity entity, Bank bank) {
-    if (entity.getAccounts() != null) {
-      bank.setAccounts(AccountMap.transform(entity.getAccounts()));
-    }
+//    if (entity.getAccounts() != null) {
+//      bank.setAccounts(AccountMap.transform(entity.getAccounts()));
+//    }
     return bank;
   }
 

@@ -55,7 +55,7 @@ public class BankServiceTest {
   public void saveNewBankShouldReturnBank() {
     Mockito.when(this.bankRepository.findByNameIgnoreCase(anyString())).thenReturn(Collections.emptyList());
     Mockito.when(this.bankRepository.save(any(BankEntity.class))).thenReturn(bankEntity);
-    Bank bank = bankServiceImpl.saveBank(bankInput);
+    Bank bank = bankServiceImpl.addBank(bankInput);
     assertNotNull(bank);
     assertNotNull(bank.getId());
   }
@@ -64,7 +64,7 @@ public class BankServiceTest {
   public void saveExistingBankShouldReturnBank() {
     Mockito.when(this.bankRepository.findByNameIgnoreCase(anyString()))
         .thenReturn(Arrays.asList(bankEntity));
-    Bank bank = bankServiceImpl.saveBank(bankInput);
+    Bank bank = bankServiceImpl.addBank(bankInput);
     verify(bankRepository, never()).save(bankEntity);
     assertNotNull(bank);
     assertNotNull(bank.getId());

@@ -15,7 +15,7 @@ public class TransactionMap {
     transaction.setToId(entity.getToAccount().getId());
     transaction.setId(entity.getId());
     transaction.setAmount(entity.getAmount());
-    transaction.setType(entity.getType().toString());
+    transaction.setType(entity.getType());
     transaction.setSuccess(entity.isSuccess());
     return transaction;
   }

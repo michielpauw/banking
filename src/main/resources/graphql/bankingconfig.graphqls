@@ -1,13 +1,34 @@
 type Query {
+    customer(id: ID!): Customer
+    customers: [Customer!]!
+    account(id: ID!): Account
+    accounts: [Account!]!
+    accountsFiltered(min: Int, max: Int, type: AccountType): [Account!]!
+    bank(id: ID!): Bank
+    banks: [Bank!]!
+    transactions: [Transaction!]!
+}
+
+type Mutation {
+    customer(input: CustomerInput!): Customer
+    customers(input: [CustomerInput!]!): [Customer!]!
+    account(input: AccountInput!): Account
+    bank(input: BankInput!): Bank
+    transaction(input: TransactionInput!): Transaction
 }
 
 type Account {
     id: ID!
-    customers: [Customer!]!
+    customerIds: [Int]
     balance: Int!
-    transactionsTo: [Transaction!]!
-    transactionsFrom: [Transaction!]!
+    bank: String
     type: AccountType
+}
+
+input AccountInput {
+    customerId: Int!
+    bankId: Int!
+    type: AccountType!
 }
 
 enum AccountType {
@@ -16,17 +37,29 @@ enum AccountType {
 
 type Customer {
     id: ID!
-    accounts: [Account!]!
+    accounts: [Account]
     name: String!
     age: Int!
 }
 
+input CustomerInput {
+    name: String!
+    age: Int
+}
+
 type Transaction {
     id: ID!
-    fromAccount: Account!
-    toAccount: Account!
+    fromId: Int
+    toId: Int!
     amount: Int!
     type: TransactionType!
+}
+
+input TransactionInput {
+    fromId: Int
+    toId: Int!
+    amount: Int!
+    type: TransactionType = DEPOSIT
 }
 
 enum TransactionType {
@@ -36,5 +69,9 @@ enum TransactionType {
 type Bank {
     id: ID!
     accounts: [Account!]!
+    name: String!
+}
+
+input BankInput {
     name: String!
 }

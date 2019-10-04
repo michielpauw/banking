@@ -13,9 +13,9 @@ public class CustomerMap {
     customer.setAge(entity.getAge());
     customer.setId(entity.getId());
     customer.setName(entity.getName());
-    if (entity.getAccounts() != null) {
-      customer.setAccounts(AccountMap.transform(entity.getAccounts()));
-    }
+//    if (entity.getAccounts() != null) {
+//      customer.setAccounts(AccountMap.transform(entity.getAccounts()));
+//    }
     return customer;
   }
 

@@ -2,11 +2,13 @@ package com.michiel.banking.service.impl;
 
 import com.michiel.banking.entity.AccountEntity;
 import com.michiel.banking.entity.CustomerEntity;
+import com.michiel.banking.mapping.AccountMap;
 import com.michiel.banking.mapping.CustomerMap;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.repository.CustomerRepository;
 import com.michiel.banking.rest.input.CustomerInput;
+import com.michiel.banking.rest.type.Account;
 import com.michiel.banking.rest.type.Customer;
 import com.michiel.banking.service.CustomerService;
 import java.util.ArrayList;
@@ -15,26 +17,28 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class CustomerServiceImpl implements CustomerService {
 
   @Autowired
-  CustomerRepository customerRepository;
+  private CustomerRepository customerRepository;
 
   @Autowired
-  AccountRepository accountRepository;
+  private AccountRepository accountRepository;
 
   @Autowired
-  BankRepository bankRepository;
+  private BankRepository bankRepository;
 
-  public Customer saveCustomer(CustomerInput input) {
+  public Customer addCustomer(CustomerInput input) {
     return CustomerMap.transform(customerRepository.save(CustomerMap.transform(input)));
   }
 
-  public List<Customer> saveCustomers(Iterable<CustomerInput> input) {
+  public List<Customer> addCustomers(Iterable<CustomerInput> input) {
     List<Customer> customers = new ArrayList<>();
-    input.forEach(customer -> customers.add(saveCustomer(customer)));
+    input.forEach(customer -> customers.add(addCustomer(customer)));
     return customers;
   }
 
@@ -68,5 +72,9 @@ public class CustomerServiceImpl implements CustomerService {
     } else {
       throw new NoSuchElementException();
     }
+  }
+
+  public List<Account> getCustomerAccounts(long id) {
+    return AccountMap.transform(customerRepository.findByCustomerId(id));
   }
 }

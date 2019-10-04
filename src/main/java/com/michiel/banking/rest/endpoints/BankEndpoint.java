@@ -23,7 +23,7 @@ public class BankEndpoint {
 
   @PostMapping
   public Bank saveBank(@Valid @RequestBody BankInput input) {
-    return bankService.saveBank(input);
+    return bankService.addBank(input);
   }
 
   @GetMapping

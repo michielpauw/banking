@@ -13,15 +13,17 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TransactionServiceImpl implements TransactionService {
 
   @Autowired
-  TransactionRepository transactionRepository;
+  private TransactionRepository transactionRepository;
 
   @Autowired
-  AccountRepository accountRepository;
+  private AccountRepository accountRepository;
 
   public Transaction handleTransaction(TransactionInput input) {
     if (input.getAmount() < 0) {

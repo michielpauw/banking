@@ -23,12 +23,12 @@ public class CustomerEndpoint {
 
   @PostMapping
   public Customer saveCustomer(@Valid @RequestBody CustomerInput input){
-    return customerService.saveCustomer(input);
+    return customerService.addCustomer(input);
   }
 
   @PostMapping("/multiple")
   public Iterable<Customer> saveCustomers(@Valid @RequestBody Iterable<CustomerInput> input) {
-    return customerService.saveCustomers(input);
+    return customerService.addCustomers(input);
   }
 
   @PostMapping("/{customer-id}/add_account/{account-id}")
