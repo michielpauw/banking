@@ -1,4 +1,4 @@
-package com.michiel.banking.rest.input;
+package com.michiel.banking.graphql.input;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -7,11 +7,15 @@ import lombok.Data;
 
 @Data
 @JsonPropertyOrder({
-    "name"
+    "name",
+    "age"
 })
-public class BankInput {
+public class CustomerInput {
 
-  @JsonProperty("name")
   @NotNull
+  @JsonProperty("name")
   String name;
+
+  @JsonProperty("age")
+  Integer age;
 }

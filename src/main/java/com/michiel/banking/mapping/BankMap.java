@@ -1,8 +1,8 @@
 package com.michiel.banking.mapping;
 
 import com.michiel.banking.entity.BankEntity;
-import com.michiel.banking.rest.input.BankInput;
-import com.michiel.banking.rest.type.Bank;
+import com.michiel.banking.graphql.input.BankInput;
+import com.michiel.banking.graphql.type.Bank;
 import java.util.ArrayList;
 import java.util.List;
 

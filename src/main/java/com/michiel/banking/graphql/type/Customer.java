@@ -1,4 +1,4 @@
-package com.michiel.banking.rest.type;
+package com.michiel.banking.graphql.type;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

@@ -9,8 +9,8 @@ import static org.mockito.Mockito.verify;
 
 import com.michiel.banking.entity.BankEntity;
 import com.michiel.banking.repository.BankRepository;
-import com.michiel.banking.rest.input.BankInput;
-import com.michiel.banking.rest.type.Bank;
+import com.michiel.banking.graphql.input.BankInput;
+import com.michiel.banking.graphql.type.Bank;
 import com.michiel.banking.service.impl.BankServiceImpl;
 import java.util.Arrays;
 import java.util.Collections;

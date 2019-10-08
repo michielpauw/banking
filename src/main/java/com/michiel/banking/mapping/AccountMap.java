@@ -1,7 +1,7 @@
 package com.michiel.banking.mapping;
 
 import com.michiel.banking.entity.AccountEntity;
-import com.michiel.banking.rest.type.Account;
+import com.michiel.banking.graphql.type.Account;
 import java.util.ArrayList;
 import java.util.List;
 

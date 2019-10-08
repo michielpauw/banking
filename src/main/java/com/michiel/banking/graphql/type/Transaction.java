@@ -1,32 +1,35 @@
-package com.michiel.banking.rest.input;
+package com.michiel.banking.graphql.type;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.michiel.banking.entity.TransactionType;
-import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 @JsonPropertyOrder({
+    "id",
     "toId",
     "fromId",
     "amount",
-    "type"
+    "type",
+    "success"
 })
-public class TransactionInput {
+public class Transaction {
+  @JsonProperty("id")
+  Long id;
 
-  @NotNull
   @JsonProperty("toId")
   Long toId;
 
   @JsonProperty("fromId")
   Long fromId;
 
-  @NotNull
   @JsonProperty("amount")
   Long amount;
 
-  @NotNull
   @JsonProperty("type")
   TransactionType type;
+
+  @JsonProperty("success")
+  Boolean success;
 }

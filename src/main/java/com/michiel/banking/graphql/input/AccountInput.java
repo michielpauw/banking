@@ -1,4 +1,4 @@
-package com.michiel.banking.rest.input;
+package com.michiel.banking.graphql.input;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

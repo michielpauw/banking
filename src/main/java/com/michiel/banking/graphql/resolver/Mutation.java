@@ -1,14 +1,14 @@
 package com.michiel.banking.graphql.resolver;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
-import com.michiel.banking.rest.input.BankInput;
-import com.michiel.banking.rest.input.CustomerInput;
-import com.michiel.banking.rest.input.AccountInput;
-import com.michiel.banking.rest.input.TransactionInput;
-import com.michiel.banking.rest.type.Account;
-import com.michiel.banking.rest.type.Bank;
-import com.michiel.banking.rest.type.Customer;
-import com.michiel.banking.rest.type.Transaction;
+import com.michiel.banking.graphql.input.BankInput;
+import com.michiel.banking.graphql.input.CustomerInput;
+import com.michiel.banking.graphql.input.AccountInput;
+import com.michiel.banking.graphql.input.TransactionInput;
+import com.michiel.banking.graphql.type.Account;
+import com.michiel.banking.graphql.type.Bank;
+import com.michiel.banking.graphql.type.Customer;
+import com.michiel.banking.graphql.type.Transaction;
 import com.michiel.banking.service.AccountService;
 import com.michiel.banking.service.BankService;
 import com.michiel.banking.service.CustomerService;

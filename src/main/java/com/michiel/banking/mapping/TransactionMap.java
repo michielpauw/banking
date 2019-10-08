@@ -2,7 +2,7 @@ package com.michiel.banking.mapping;
 
 import com.michiel.banking.entity.TransactionEntity;
 import com.michiel.banking.entity.TransactionType;
-import com.michiel.banking.rest.type.Transaction;
+import com.michiel.banking.graphql.type.Transaction;
 import java.util.ArrayList;
 import java.util.List;
 

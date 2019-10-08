@@ -1,8 +1,8 @@
 package com.michiel.banking.service;
 
 import com.michiel.banking.entity.AccountType;
-import com.michiel.banking.rest.input.AccountInput;
-import com.michiel.banking.rest.type.Account;
+import com.michiel.banking.graphql.input.AccountInput;
+import com.michiel.banking.graphql.type.Account;
 import java.util.List;
 import java.util.NoSuchElementException;
 

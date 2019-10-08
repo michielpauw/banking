@@ -2,10 +2,11 @@ package com.michiel.banking.graphql.resolver;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.michiel.banking.entity.AccountType;
-import com.michiel.banking.rest.type.Account;
-import com.michiel.banking.rest.type.Bank;
-import com.michiel.banking.rest.type.Customer;
-import com.michiel.banking.rest.type.Transaction;
+import com.michiel.banking.entity.TransactionType;
+import com.michiel.banking.graphql.type.Account;
+import com.michiel.banking.graphql.type.Bank;
+import com.michiel.banking.graphql.type.Customer;
+import com.michiel.banking.graphql.type.Transaction;
 import com.michiel.banking.service.AccountService;
 import com.michiel.banking.service.BankService;
 import com.michiel.banking.service.CustomerService;
@@ -54,11 +55,6 @@ public class Query implements GraphQLQueryResolver {
     return accountService.getAccounts(min, max, type);
   }
 
-
-  public Iterable<Account> accountsFiltered(Long min, Long max, AccountType type) {
-    return accountService.getAccounts(min, max, type);
-  }
-
   public Bank bank(Long id) {
     return bankService.getBankById(id);
   }
@@ -67,7 +63,7 @@ public class Query implements GraphQLQueryResolver {
     return bankService.getBanks();
   }
 
-  public Iterable<Transaction> transactions() {
-    return transactionService.getTransactions();
+  public Iterable<Transaction> transactions(Long toId, Long fromId, TransactionType type, Long minAmount, Long maxAmount) {
+    return transactionService.getTransactions(toId, fromId, type, minAmount, maxAmount);
   }
 }

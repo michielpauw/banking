@@ -1,8 +1,8 @@
 package com.michiel.banking.mapping;
 
 import com.michiel.banking.entity.CustomerEntity;
-import com.michiel.banking.rest.input.CustomerInput;
-import com.michiel.banking.rest.type.Customer;
+import com.michiel.banking.graphql.input.CustomerInput;
+import com.michiel.banking.graphql.type.Customer;
 import java.util.ArrayList;
 import java.util.List;
 

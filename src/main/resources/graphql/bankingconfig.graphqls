@@ -5,7 +5,7 @@ type Query {
     accounts(min: Int, max: Int, type: AccountType): [Account!]!
     bank(id: ID!): Bank
     banks: [Bank!]!
-    transactions: [Transaction!]!
+    transactions(toId: Int, fromId: Int, type: TransactionType, minAmount: Int, maxAmount: Int): [Transaction!]!
 }
 
 type Mutation {

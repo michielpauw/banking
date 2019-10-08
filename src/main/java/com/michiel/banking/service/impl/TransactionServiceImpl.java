@@ -6,8 +6,8 @@ import com.michiel.banking.entity.TransactionType;
 import com.michiel.banking.mapping.TransactionMap;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.TransactionRepository;
-import com.michiel.banking.rest.input.TransactionInput;
-import com.michiel.banking.rest.type.Transaction;
+import com.michiel.banking.graphql.input.TransactionInput;
+import com.michiel.banking.graphql.type.Transaction;
 import com.michiel.banking.service.TransactionService;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -73,7 +73,34 @@ public class TransactionServiceImpl implements TransactionService {
     return TransactionMap.transform(transactionRepository.save(entity));
   }
 
-  public Iterable<Transaction> getTransactions() {
+  public Iterable<Transaction> getTransactions(Long toId, Long fromId, TransactionType type,
+      Long minAmount, Long maxAmount) {
+//    Predicate<Long> toFilter = (x) -> true;
+//    Predicate<Long> fromFilter = (x) -> true;
+//    Predicate<Long> amountFilter = (x) -> true;
+//    Predicate<String> typeFilter = (t) -> true;
+//    if (toId != null) {
+//      toFilter = (x) -> x.equals(toId);
+//    }
+//    if (fromId != null) {
+//      fromFilter = (x) -> x.equals(fromId);
+//    }
+//    if (maxAmount != null && minAmount != null) {
+//      amountFilter = (x) -> x <= maxAmount && x >= minAmount;
+//    } else if (maxAmount != null) {
+//      amountFilter = (x) -> x <= maxAmount;
+//    } else if (minAmount != null) {
+//      amountFilter = (x) -> x >= minAmount;
+//    }
+//    if (type != null) {
+//      typeFilter = (t) -> t.equals(type.toString());
+//    }
+//    final Iterable<Transaction> transactions = TransactionMap.transform(transactionRepository.findAll());
+//    return StreamSupport.stream(transactions.spliterator(), false)
+//        .filter(transaction -> amountFilter.test(transaction.getAmount()))
+//        .filter(transaction -> fromFilter.test(transaction.getFromId()))
+//        .collect(Collectors.toList());
+//    return ;
     return TransactionMap.transform(transactionRepository.findAll());
   }
 }
