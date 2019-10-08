@@ -38,8 +38,13 @@ public class Query implements GraphQLQueryResolver {
     return customer;
   }
 
-  public Iterable<Customer> customers() {
-    return customerService.getCustomers();
+  public Iterable<Customer> customers(final DataFetchingEnvironment dataFetchingEnvironment) {
+    final DataFetchingFieldSelectionSet selectionSet = dataFetchingEnvironment.getSelectionSet();
+    final Iterable<Customer> customers = customerService.getCustomers();
+    if (selectionSet.get().getKeys().contains("accounts")) {
+      customers.forEach(customer -> customer.setAccounts(customerService.getCustomerAccounts(customer.getId())));
+    }
+    return customers;
   }
 
   public Account account(Long id, final DataFetchingEnvironment dataFetchingEnvironment) {
@@ -51,8 +56,13 @@ public class Query implements GraphQLQueryResolver {
     return account;
   }
 
-  public Iterable<Account> accounts(Long min, Long max, AccountType type) {
-    return accountService.getAccounts(min, max, type);
+  public Iterable<Account> accounts(Long min, Long max, AccountType type, final DataFetchingEnvironment dataFetchingEnvironment) {
+    final DataFetchingFieldSelectionSet selectionSet = dataFetchingEnvironment.getSelectionSet();
+    final Iterable<Account> accounts = accountService.getAccounts(min, max, type);
+    if (selectionSet.get().getKeys().contains("customerIds")) {
+      accounts.forEach(account -> account.setCustomerIds(accountService.getCustomerIds(account.getId())));
+    }
+    return accounts;
   }
 
   public Bank bank(Long id) {
