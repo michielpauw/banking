@@ -99,8 +99,6 @@ public class AccountServiceImpl implements AccountService {
 
   public Account addAccount(AccountInput input) throws NoSuchElementException
   {
-    System.out.println(input.getCustomerId());
-    System.out.println(input.getBankId());
     Optional<BankEntity> bankOptional = bankRepository.findById(input.getBankId());
     Optional<CustomerEntity> customerOptional = customerRepository.findById(input.getCustomerId());
     if (bankOptional.isPresent() && customerOptional.isPresent()) {
