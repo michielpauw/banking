@@ -50,8 +50,8 @@ public class Query implements GraphQLQueryResolver {
     return account;
   }
 
-  public Iterable<Account> accounts() {
-    return accountService.getAccounts();
+  public Iterable<Account> accounts(Long min, Long max, AccountType type) {
+    return accountService.getAccounts(min, max, type);
   }
 
 

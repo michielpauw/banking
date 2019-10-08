@@ -2,8 +2,7 @@ type Query {
     customer(id: ID!): Customer
     customers: [Customer!]!
     account(id: ID!): Account
-    accounts: [Account!]!
-    accountsFiltered(min: Int, max: Int, type: AccountType): [Account!]!
+    accounts(min: Int, max: Int, type: AccountType): [Account!]!
     bank(id: ID!): Bank
     banks: [Bank!]!
     transactions: [Transaction!]!
