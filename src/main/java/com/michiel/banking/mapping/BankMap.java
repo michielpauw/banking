@@ -8,18 +8,11 @@ import java.util.List;
 
 public class BankMap {
 
-  public static Bank transform(BankEntity entity, Bank bank) {
-//    if (entity.getAccounts() != null) {
-//      bank.setAccounts(AccountMap.transform(entity.getAccounts()));
-//    }
-    return bank;
-  }
-
   public static Bank transform(BankEntity entity) {
     Bank bank = new Bank();
     bank.setId(entity.getId());
     bank.setName(entity.getName());
-    return transform(entity, bank);
+    return bank;
   }
 
   public static List<Bank> transform(Iterable<BankEntity> entities) {

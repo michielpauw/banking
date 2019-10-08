@@ -75,6 +75,8 @@ public class TransactionServiceImpl implements TransactionService {
 
   public Iterable<Transaction> getTransactions(Long toId, Long fromId, TransactionType type,
       Long minAmount, Long maxAmount) {
+
+    // TODO: Implement filters
 //    Predicate<Long> toFilter = (x) -> true;
 //    Predicate<Long> fromFilter = (x) -> true;
 //    Predicate<Long> amountFilter = (x) -> true;

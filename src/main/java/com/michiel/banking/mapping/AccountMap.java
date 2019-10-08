@@ -16,12 +16,6 @@ public class AccountMap {
     }
     account.setId(entity.getId());
     account.setType(entity.getType());
-//    if (entity.getCustomers() != null) {
-//      List<Long> customerIds = new ArrayList<>();
-//      entity.getCustomers().forEach(customer -> customerIds.add(customer.getId()));
-//      Collections.sort(customerIds);
-//      account.setCustomerIds(customerIds);
-//    }
     return account;
   }
 
