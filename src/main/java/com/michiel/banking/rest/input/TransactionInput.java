@@ -8,18 +8,18 @@ import lombok.Data;
 
 @Data
 @JsonPropertyOrder({
-    "to_id",
-    "from_id",
+    "toId",
+    "fromId",
     "amount",
     "type"
 })
 public class TransactionInput {
 
   @NotNull
-  @JsonProperty("to_id")
+  @JsonProperty("toId")
   Long toId;
 
-  @JsonProperty("from_id")
+  @JsonProperty("fromId")
   Long fromId;
 
   @NotNull

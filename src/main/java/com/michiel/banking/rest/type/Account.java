@@ -11,11 +11,11 @@ import lombok.Data;
 @Data
 @JsonPropertyOrder({
     "id",
-    "customer-ids",
+    "customerIds",
     "balance",
     "type",
     "bank",
-    "bank-id"
+    "bankId"
 })
 @JsonInclude(Include.NON_NULL)
 public class Account {
@@ -23,7 +23,7 @@ public class Account {
   @JsonProperty("id")
   Long id;
 
-  @JsonProperty("customer-ids")
+  @JsonProperty("customerIds")
   List<Long> customerIds;
 
   @JsonProperty("balance")
@@ -35,6 +35,6 @@ public class Account {
   @JsonProperty("bank")
   String bank;
 
-  @JsonProperty("bank-id")
+  @JsonProperty("bankId")
   Long bankId;
 }

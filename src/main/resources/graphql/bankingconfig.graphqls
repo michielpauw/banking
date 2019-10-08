@@ -53,6 +53,7 @@ type Transaction {
     toId: Int!
     amount: Int!
     type: TransactionType!
+    success: Boolean!
 }
 
 input TransactionInput {
