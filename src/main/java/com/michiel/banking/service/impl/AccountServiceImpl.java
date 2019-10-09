@@ -114,7 +114,7 @@ public class AccountServiceImpl implements AccountService {
   }
 
   public List<Long> getCustomerIds(long id) {
-    return accountRepository.findByCustomerId(id);
+    return accountRepository.findByAccountId(id);
   }
 
 }

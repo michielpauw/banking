@@ -3,14 +3,17 @@ package com.michiel.banking.service.impl;
 import com.michiel.banking.entity.AccountEntity;
 import com.michiel.banking.entity.TransactionEntity;
 import com.michiel.banking.entity.TransactionType;
+import com.michiel.banking.graphql.input.TransactionInput;
+import com.michiel.banking.graphql.type.Transaction;
 import com.michiel.banking.mapping.TransactionMap;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.TransactionRepository;
-import com.michiel.banking.graphql.input.TransactionInput;
-import com.michiel.banking.graphql.type.Transaction;
 import com.michiel.banking.service.TransactionService;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,34 +78,33 @@ public class TransactionServiceImpl implements TransactionService {
 
   public Iterable<Transaction> getTransactions(Long toId, Long fromId, TransactionType type,
       Long minAmount, Long maxAmount) {
-
-    // TODO: Implement filters
-//    Predicate<Long> toFilter = (x) -> true;
-//    Predicate<Long> fromFilter = (x) -> true;
-//    Predicate<Long> amountFilter = (x) -> true;
-//    Predicate<String> typeFilter = (t) -> true;
-//    if (toId != null) {
-//      toFilter = (x) -> x.equals(toId);
-//    }
-//    if (fromId != null) {
-//      fromFilter = (x) -> x.equals(fromId);
-//    }
-//    if (maxAmount != null && minAmount != null) {
-//      amountFilter = (x) -> x <= maxAmount && x >= minAmount;
-//    } else if (maxAmount != null) {
-//      amountFilter = (x) -> x <= maxAmount;
-//    } else if (minAmount != null) {
-//      amountFilter = (x) -> x >= minAmount;
-//    }
-//    if (type != null) {
-//      typeFilter = (t) -> t.equals(type.toString());
-//    }
-//    final Iterable<Transaction> transactions = TransactionMap.transform(transactionRepository.findAll());
-//    return StreamSupport.stream(transactions.spliterator(), false)
-//        .filter(transaction -> amountFilter.test(transaction.getAmount()))
-//        .filter(transaction -> fromFilter.test(transaction.getFromId()))
-//        .collect(Collectors.toList());
-//    return ;
-    return TransactionMap.transform(transactionRepository.findAll());
+    Predicate<Transaction> toFilter = (x) -> true;
+    Predicate<Transaction> fromFilter = (x) -> true;
+    Predicate<Transaction> amountFilter = (x) -> true;
+    Predicate<Transaction> typeFilter = (t) -> true;
+    if (toId != null) {
+      toFilter = (x) -> x.getToId().equals(toId);
+    }
+    if (fromId != null) {
+      fromFilter = (x) -> x.getFromId().equals(fromId);
+    }
+    if (maxAmount != null && minAmount != null) {
+      amountFilter = (x) -> x.getAmount() <= maxAmount && x.getAmount() >= minAmount;
+    } else if (maxAmount != null) {
+      amountFilter = (x) -> x.getAmount() <= maxAmount;
+    } else if (minAmount != null) {
+      amountFilter = (x) -> x.getAmount() >= minAmount;
+    }
+    if (type != null) {
+      typeFilter = (t) -> t.getType().equals(type.toString());
+    }
+    Iterable<Transaction> transactions = TransactionMap.transform(transactionRepository.findAll());
+    return StreamSupport.stream(transactions.spliterator(), false)
+        .filter(amountFilter)
+        .filter(fromFilter)
+        .filter(toFilter)
+        .filter(typeFilter)
+        .collect(Collectors.toList());
+//    return TransactionMap.transform(transactionRepository.findAll());
   }
 }
