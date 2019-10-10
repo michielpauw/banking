@@ -4,19 +4,18 @@ import com.michiel.banking.entity.AccountEntity;
 import com.michiel.banking.entity.AccountType;
 import com.michiel.banking.entity.BankEntity;
 import com.michiel.banking.entity.CustomerEntity;
+import com.michiel.banking.graphql.input.AccountInput;
+import com.michiel.banking.graphql.type.Account;
 import com.michiel.banking.mapping.AccountMap;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.repository.CustomerRepository;
-import com.michiel.banking.graphql.input.AccountInput;
-import com.michiel.banking.graphql.type.Account;
 import com.michiel.banking.service.AccountService;
-import com.michiel.banking.service.filter.AccountTypeFunctionalInterface;
-import com.michiel.banking.service.filter.IntegerFunctionalInterface;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,29 +49,15 @@ public class AccountServiceImpl implements AccountService {
   }
 
   public Iterable<Account> getAccounts(Long minimum, Long maximum, AccountType type) {
-    IntegerFunctionalInterface integerFilter = (long x) -> true;
-    AccountTypeFunctionalInterface typeFilter = (AccountType account) -> true;
-    if (type != null) {
-      typeFilter = (AccountType account) -> type == account;
-    }
-    if (minimum != null && maximum != null) {
-      integerFilter = (long x) -> x >= minimum && x <= maximum;
-    } else if (minimum != null) {
-      integerFilter = (long x) -> x >= minimum;
-    } else if (maximum != null) {
-      integerFilter = (long x) -> x <= maximum;
-    }
-    return getFilteredAccounts(integerFilter, typeFilter);
-  }
-
-  public Iterable<Account> getFilteredAccounts(
-      IntegerFunctionalInterface integerFilter,
-      AccountTypeFunctionalInterface typeFilter
-  ) {
+    Predicate<Account> typeFilter = (a) -> type == null || a.getType().equals(type);
+    Predicate<Account> amountFilter = (x) -> ((maximum == null && minimum == null)
+        || (maximum == null && x.getBalance() >= minimum)
+        || (minimum == null && x.getBalance() <= maximum)
+        || (minimum != null && maximum != null && x.getBalance() <= maximum && x.getBalance() >= minimum));
     Iterable<Account> accounts = getAccounts();
     return StreamSupport.stream(accounts.spliterator(), false)
-        .filter(account -> integerFilter.integerFilter(account.getBalance()))
-        .filter(account -> typeFilter.typeFilter(account.getType()))
+        .filter(amountFilter)
+        .filter(typeFilter)
         .collect(Collectors.toList());
   }
 
