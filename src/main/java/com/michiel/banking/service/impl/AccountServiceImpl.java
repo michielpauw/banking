@@ -39,6 +39,13 @@ public class AccountServiceImpl implements AccountService {
     return AccountMap.transform(accountRepository.findAll());
   }
 
+  public Iterable<Account> getAccounts(Predicate<Account> predicate) {
+    Iterable<Account> accounts = getAccounts();
+    return StreamSupport.stream(accounts.spliterator(), false)
+        .filter(predicate)
+        .collect(Collectors.toList());
+  }
+
   public Account getAccountById(long id) throws NoSuchElementException {
     Optional<AccountEntity> accountEntity = accountRepository.findById(id);
     if (accountEntity.isPresent()) {
@@ -48,17 +55,13 @@ public class AccountServiceImpl implements AccountService {
     }
   }
 
-  public Iterable<Account> getAccounts(Long minimum, Long maximum, AccountType type) {
+  public Predicate<Account> getAccountPredicate(Long minimum, Long maximum, AccountType type) {
     Predicate<Account> typeFilter = (a) -> type == null || a.getType().equals(type);
     Predicate<Account> amountFilter = (x) -> ((maximum == null && minimum == null)
         || (maximum == null && x.getBalance() >= minimum)
         || (minimum == null && x.getBalance() <= maximum)
         || (minimum != null && maximum != null && x.getBalance() <= maximum && x.getBalance() >= minimum));
-    Iterable<Account> accounts = getAccounts();
-    return StreamSupport.stream(accounts.spliterator(), false)
-        .filter(amountFilter)
-        .filter(typeFilter)
-        .collect(Collectors.toList());
+    return (x) -> typeFilter.test(x) && amountFilter.test(x);
   }
 
   public AccountEntity addCustomerToAccount(AccountEntity account, CustomerEntity customer) {

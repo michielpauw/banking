@@ -76,7 +76,7 @@ public class TransactionServiceImpl implements TransactionService {
     return TransactionMap.transform(transactionRepository.save(entity));
   }
 
-  public Iterable<Transaction> getTransactions(Long toId, Long fromId, TransactionType type,
+  public Predicate<Transaction> getTransactionPredicate(Long toId, Long fromId, TransactionType type,
       Long minAmount, Long maxAmount) {
     Predicate<Transaction> toFilter = (x) -> toId == null || x.getToId().equals(toId);
     Predicate<Transaction> fromFilter = (x) -> fromId == null || (x.getFromId() != null && x.getFromId().equals(fromId));
@@ -85,12 +85,17 @@ public class TransactionServiceImpl implements TransactionService {
         || (maxAmount == null && x.getAmount() >= minAmount)
         || (minAmount == null && x.getAmount() <= maxAmount)
         || (minAmount != null && maxAmount != null && x.getAmount() <= maxAmount && x.getAmount() >= minAmount));
-    Iterable<Transaction> transactions = TransactionMap.transform(transactionRepository.findAll());
+    return (x) -> toFilter.test(x) && fromFilter.test(x) && typeFilter.test(x) && amountFilter.test(x);
+  }
+
+  public Iterable<Transaction> getTransactions() {
+    return TransactionMap.transform(transactionRepository.findAll());
+  }
+
+  public Iterable<Transaction> getTransactions(Predicate<Transaction> predicate) {
+    Iterable<Transaction> transactions = getTransactions();
     return StreamSupport.stream(transactions.spliterator(), false)
-        .filter(amountFilter)
-        .filter(fromFilter)
-        .filter(toFilter)
-        .filter(typeFilter)
+        .filter(predicate)
         .collect(Collectors.toList());
   }
 }

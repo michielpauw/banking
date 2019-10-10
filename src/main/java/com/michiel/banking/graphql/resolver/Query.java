@@ -58,7 +58,7 @@ public class Query implements GraphQLQueryResolver {
 
   public Iterable<Account> accounts(Long min, Long max, AccountType type, final DataFetchingEnvironment dataFetchingEnvironment) {
     final DataFetchingFieldSelectionSet selectionSet = dataFetchingEnvironment.getSelectionSet();
-    final Iterable<Account> accounts = accountService.getAccounts(min, max, type);
+    final Iterable<Account> accounts = accountService.getAccounts(accountService.getAccountPredicate(min, max, type));
     if (selectionSet.get().getKeys().contains("customerIds")) {
       accounts.forEach(account -> account.setCustomerIds(accountService.getCustomerIds(account.getId())));
     }
@@ -74,6 +74,6 @@ public class Query implements GraphQLQueryResolver {
   }
 
   public Iterable<Transaction> transactions(Long toId, Long fromId, TransactionType type, Long minAmount, Long maxAmount) {
-    return transactionService.getTransactions(toId, fromId, type, minAmount, maxAmount);
+    return transactionService.getTransactions(transactionService.getTransactionPredicate(toId, fromId, type, minAmount, maxAmount));
   }
 }
