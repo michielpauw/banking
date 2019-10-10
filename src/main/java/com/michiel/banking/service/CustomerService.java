@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
 public interface CustomerService {
   Customer addCustomer(CustomerInput input);
   List<Customer> addCustomers(Iterable<CustomerInput> input);
-  Iterable<Customer> getCustomers();
+  List<Customer> getCustomers();
   Customer addAccountToCustomer(long customerId, long accountId) throws NoSuchElementException;
   Customer getCustomerById(long id) throws NoSuchElementException;
   List<Account> getCustomerAccounts(long id);

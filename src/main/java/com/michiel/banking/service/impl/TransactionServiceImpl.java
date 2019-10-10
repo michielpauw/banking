@@ -10,6 +10,7 @@ import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.TransactionRepository;
 import com.michiel.banking.service.TransactionService;
 import com.michiel.banking.util.Filter;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -87,12 +88,12 @@ public class TransactionServiceImpl implements TransactionService {
     return (x) -> toFilter.test(x) && fromFilter.test(x) && typeFilter.test(x) && amountFilter.test(x);
   }
 
-  public Iterable<Transaction> getTransactions() {
+  public List<Transaction> getTransactions() {
     return TransactionMap.transform(transactionRepository.findAll());
   }
 
-  public Iterable<Transaction> getTransactions(Predicate<Transaction> predicate) {
-    Iterable<Transaction> transactions = getTransactions();
+  public List<Transaction> getTransactions(Predicate<Transaction> predicate) {
+    List<Transaction> transactions = getTransactions();
     return Filter.filter(transactions, predicate);
   }
 }

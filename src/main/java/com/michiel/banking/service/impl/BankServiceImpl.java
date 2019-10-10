@@ -33,7 +33,7 @@ public class BankServiceImpl implements BankService {
     return BankMap.transform(bankEntity);
   }
 
-  public Iterable<Bank> getBanks() {
+  public List<Bank> getBanks() {
     return BankMap.transform(bankRepository.findAll());
   }
 

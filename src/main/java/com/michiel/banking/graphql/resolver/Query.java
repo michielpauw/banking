@@ -13,6 +13,7 @@ import com.michiel.banking.service.CustomerService;
 import com.michiel.banking.service.TransactionService;
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.DataFetchingFieldSelectionSet;
+import java.util.List;
 
 public class Query implements GraphQLQueryResolver {
 
@@ -38,9 +39,9 @@ public class Query implements GraphQLQueryResolver {
     return customer;
   }
 
-  public Iterable<Customer> customers(final DataFetchingEnvironment dataFetchingEnvironment) {
+  public List<Customer> customers(final DataFetchingEnvironment dataFetchingEnvironment) {
     final DataFetchingFieldSelectionSet selectionSet = dataFetchingEnvironment.getSelectionSet();
-    final Iterable<Customer> customers = customerService.getCustomers();
+    final List<Customer> customers = customerService.getCustomers();
     if (selectionSet.get().getKeys().contains("accounts")) {
       customers.forEach(customer -> customer.setAccounts(customerService.getCustomerAccounts(customer.getId())));
     }
@@ -56,9 +57,9 @@ public class Query implements GraphQLQueryResolver {
     return account;
   }
 
-  public Iterable<Account> accounts(Long min, Long max, AccountType type, final DataFetchingEnvironment dataFetchingEnvironment) {
+  public List<Account> accounts(Long min, Long max, AccountType type, final DataFetchingEnvironment dataFetchingEnvironment) {
     final DataFetchingFieldSelectionSet selectionSet = dataFetchingEnvironment.getSelectionSet();
-    final Iterable<Account> accounts = accountService.getAccounts(accountService.getAccountPredicate(min, max, type));
+    final List<Account> accounts = accountService.getAccounts(accountService.getAccountPredicate(min, max, type));
     if (selectionSet.get().getKeys().contains("customerIds")) {
       accounts.forEach(account -> account.setCustomerIds(accountService.getCustomerIds(account.getId())));
     }
@@ -69,11 +70,11 @@ public class Query implements GraphQLQueryResolver {
     return bankService.getBankById(id);
   }
 
-  public Iterable<Bank> banks() {
+  public List<Bank> banks() {
     return bankService.getBanks();
   }
 
-  public Iterable<Transaction> transactions(Long toId, Long fromId, TransactionType type, Long minAmount, Long maxAmount) {
+  public List<Transaction> transactions(Long toId, Long fromId, TransactionType type, Long minAmount, Long maxAmount) {
     return transactionService.getTransactions(transactionService.getTransactionPredicate(toId, fromId, type, minAmount, maxAmount));
   }
 }

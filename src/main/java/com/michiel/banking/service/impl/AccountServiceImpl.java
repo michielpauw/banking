@@ -34,12 +34,12 @@ public class AccountServiceImpl implements AccountService {
   @Autowired
   private CustomerRepository customerRepository;
 
-  public Iterable<Account> getAccounts() {
-    return AccountMap.transform(accountRepository.findAll());
+  public List<Account> getAccounts() {
+    return AccountMap.transform(this.accountRepository.findAll());
   }
 
-  public Iterable<Account> getAccounts(Predicate<Account> predicate) {
-    Iterable<Account> accounts = getAccounts();
+  public List<Account> getAccounts(Predicate<Account> predicate) {
+    List<Account> accounts = getAccounts();
     return Filter.filter(accounts, predicate);
   }
 

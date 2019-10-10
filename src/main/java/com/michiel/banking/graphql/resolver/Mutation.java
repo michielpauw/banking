@@ -33,8 +33,8 @@ public class Mutation implements GraphQLMutationResolver {
   public Customer customer(CustomerInput input) {
     return customerService.addCustomer(input);
   }
-
-  public Iterable<Customer> customers(List<CustomerInput> input) {
+c
+  public List<Customer> customers(List<CustomerInput> input) {
     return customerService.addCustomers(input);
   }
 

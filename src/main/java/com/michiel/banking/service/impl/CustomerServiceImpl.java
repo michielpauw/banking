@@ -42,7 +42,7 @@ public class CustomerServiceImpl implements CustomerService {
     return customers;
   }
 
-  public Iterable<Customer> getCustomers() {
+  public List<Customer> getCustomers() {
     return CustomerMap.transform(customerRepository.findAll());
   }
 
