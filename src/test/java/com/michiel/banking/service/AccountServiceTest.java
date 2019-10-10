@@ -141,7 +141,7 @@ public class AccountServiceTest {
 
     List<AccountEntity> accounts = new ArrayList<>(Arrays.asList(account1, shouldPass1, account3, account4, shouldPass2));
     Mockito.when(this.accountRepository.findAll()).thenReturn(accounts);
-    final Iterable<Account> tripleFilteredAccounts = this.accountService.getAccounts((long)200, (long)250, AccountType.CHILD);
+    final Iterable<Account> tripleFilteredAccounts = this.accountService.getAccounts(this.accountService.getAccountPredicate(200L, 250L, AccountType.CHILD));
     Iterator<Account> iterator = tripleFilteredAccounts.iterator();
     assertNotNull(tripleFilteredAccounts);
     assertEquals(shouldPass1.getId(), (long)iterator.next().getId());

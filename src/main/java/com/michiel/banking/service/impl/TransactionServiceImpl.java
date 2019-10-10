@@ -9,11 +9,10 @@ import com.michiel.banking.mapping.TransactionMap;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.TransactionRepository;
 import com.michiel.banking.service.TransactionService;
+import com.michiel.banking.util.Filter;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,8 +93,6 @@ public class TransactionServiceImpl implements TransactionService {
 
   public Iterable<Transaction> getTransactions(Predicate<Transaction> predicate) {
     Iterable<Transaction> transactions = getTransactions();
-    return StreamSupport.stream(transactions.spliterator(), false)
-        .filter(predicate)
-        .collect(Collectors.toList());
+    return Filter.filter(transactions, predicate);
   }
 }

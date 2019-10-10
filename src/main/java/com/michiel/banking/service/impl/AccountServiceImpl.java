@@ -11,13 +11,12 @@ import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.repository.CustomerRepository;
 import com.michiel.banking.service.AccountService;
+import com.michiel.banking.util.Filter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,9 +40,7 @@ public class AccountServiceImpl implements AccountService {
 
   public Iterable<Account> getAccounts(Predicate<Account> predicate) {
     Iterable<Account> accounts = getAccounts();
-    return StreamSupport.stream(accounts.spliterator(), false)
-        .filter(predicate)
-        .collect(Collectors.toList());
+    return Filter.filter(accounts, predicate);
   }
 
   public Account getAccountById(long id) throws NoSuchElementException {
@@ -104,5 +101,4 @@ public class AccountServiceImpl implements AccountService {
   public List<Long> getCustomerIds(long id) {
     return accountRepository.findByAccountId(id);
   }
-
 }
