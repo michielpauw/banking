@@ -2,14 +2,14 @@ package com.michiel.banking.service.impl;
 
 import com.michiel.banking.entity.AccountEntity;
 import com.michiel.banking.entity.CustomerEntity;
-import com.michiel.banking.mapping.AccountMap;
-import com.michiel.banking.mapping.CustomerMap;
-import com.michiel.banking.repository.AccountRepository;
-import com.michiel.banking.repository.BankRepository;
-import com.michiel.banking.repository.CustomerRepository;
 import com.michiel.banking.graphql.input.CustomerInput;
 import com.michiel.banking.graphql.type.Account;
 import com.michiel.banking.graphql.type.Customer;
+import com.michiel.banking.mapper.AccountMapper;
+import com.michiel.banking.mapper.CustomerMapper;
+import com.michiel.banking.repository.AccountRepository;
+import com.michiel.banking.repository.BankRepository;
+import com.michiel.banking.repository.CustomerRepository;
 import com.michiel.banking.service.CustomerService;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +32,14 @@ public class CustomerServiceImpl implements CustomerService {
   @Autowired
   private BankRepository bankRepository;
 
+  @Autowired
+  private CustomerMapper customerMapper;
+
+  @Autowired
+  private AccountMapper accountMapper;
+
   public Customer addCustomer(CustomerInput input) {
-    return CustomerMap.transform(customerRepository.save(CustomerMap.transform(input)));
+    return this.customerMapper.transform(customerRepository.save(this.customerMapper.transform(input)));
   }
 
   public List<Customer> addCustomers(Iterable<CustomerInput> input) {
@@ -43,7 +49,7 @@ public class CustomerServiceImpl implements CustomerService {
   }
 
   public List<Customer> getCustomers() {
-    return CustomerMap.transform(customerRepository.findAll());
+    return this.customerMapper.transform(customerRepository.findAll());
   }
 
   public Customer addAccountToCustomer(
@@ -56,10 +62,10 @@ public class CustomerServiceImpl implements CustomerService {
     if (accountOptional.isPresent() && customerOptional.isPresent()) {
       CustomerEntity customer = customerOptional.get();
       if (customer.getAccounts().contains(accountOptional.get())) {
-        return CustomerMap.transform(customer);
+        return this.customerMapper.transform(customer);
       }
       customer.getAccounts().add(accountOptional.get());
-      return CustomerMap.transform(customerRepository.save(customer));
+      return this.customerMapper.transform(customerRepository.save(customer));
     } else {
       throw new NoSuchElementException();
     }
@@ -68,13 +74,13 @@ public class CustomerServiceImpl implements CustomerService {
   public Customer getCustomerById(long id) throws NoSuchElementException {
     Optional<CustomerEntity> customerEntity = customerRepository.findById(id);
     if (customerEntity.isPresent()) {
-      return CustomerMap.transform(customerEntity.get());
+      return this.customerMapper.transform(customerEntity.get());
     } else {
       throw new NoSuchElementException();
     }
   }
 
   public List<Account> getCustomerAccounts(long id) {
-    return AccountMap.transform(customerRepository.findByCustomerId(id));
+    return this.accountMapper.transform(customerRepository.findByCustomerId(id));
   }
 }

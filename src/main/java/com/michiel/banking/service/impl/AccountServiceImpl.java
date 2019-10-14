@@ -7,7 +7,6 @@ import com.michiel.banking.entity.CustomerEntity;
 import com.michiel.banking.graphql.input.AccountInput;
 import com.michiel.banking.graphql.type.Account;
 import com.michiel.banking.mapper.AccountMapper;
-import com.michiel.banking.mapping.AccountMap;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.repository.CustomerRepository;
@@ -50,7 +49,7 @@ public class AccountServiceImpl implements AccountService {
   public Account getAccountById(long id) throws NoSuchElementException {
     Optional<AccountEntity> accountEntity = accountRepository.findById(id);
     if (accountEntity.isPresent()) {
-      return AccountMap.transform(accountEntity.get());
+      return this.accountMapper.transform(accountEntity.get());
     } else {
       throw new NoSuchElementException();
     }
@@ -96,7 +95,7 @@ public class AccountServiceImpl implements AccountService {
       accountEntity.setBank(bankOptional.get());
       accountEntity.setType(input.getType());
       accountEntity = addCustomerToAccount(accountEntity, customer);
-      return AccountMap.transform(accountRepository.save(accountEntity));
+      return this.accountMapper.transform(accountRepository.save(accountEntity));
     } else {
       throw new NoSuchElementException();
     }

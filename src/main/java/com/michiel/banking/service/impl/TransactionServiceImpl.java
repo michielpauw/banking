@@ -5,7 +5,7 @@ import com.michiel.banking.entity.TransactionEntity;
 import com.michiel.banking.entity.TransactionType;
 import com.michiel.banking.graphql.input.TransactionInput;
 import com.michiel.banking.graphql.type.Transaction;
-import com.michiel.banking.mapping.TransactionMap;
+import com.michiel.banking.mapper.TransactionMapper;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.TransactionRepository;
 import com.michiel.banking.service.TransactionService;
@@ -28,6 +28,9 @@ public class TransactionServiceImpl implements TransactionService {
 
   @Autowired
   private AccountRepository accountRepository;
+
+  @Autowired
+  private TransactionMapper transactionMapper;
 
   public Transaction handleTransaction(TransactionInput input) {
     if (input.getAmount() < 0) {
@@ -64,7 +67,7 @@ public class TransactionServiceImpl implements TransactionService {
         accountRepository.save(toAccount);
         entity.setSuccess(true);
       }
-      return TransactionMap.transform(transactionRepository.save(entity));
+      return this.transactionMapper.transform(transactionRepository.save(entity));
     } else {
       throw new NoSuchElementException();
     }
@@ -74,7 +77,7 @@ public class TransactionServiceImpl implements TransactionService {
     entity.setSuccess(true);
     toAccount.setBalance(toAccount.getBalance() + input.getAmount());
     accountRepository.save(toAccount);
-    return TransactionMap.transform(transactionRepository.save(entity));
+    return this.transactionMapper.transform(transactionRepository.save(entity));
   }
 
   public Predicate<Transaction> getTransactionPredicate(Long toId, Long fromId, TransactionType type,
@@ -95,7 +98,7 @@ public class TransactionServiceImpl implements TransactionService {
   }
 
   public List<Transaction> getTransactions() {
-    return TransactionMap.transform(transactionRepository.findAll());
+    return this.transactionMapper.transform(transactionRepository.findAll());
   }
 
   public List<Transaction> getTransactions(Predicate<Transaction> predicate) {
