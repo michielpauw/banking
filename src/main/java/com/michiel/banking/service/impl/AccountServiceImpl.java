@@ -6,12 +6,13 @@ import com.michiel.banking.entity.BankEntity;
 import com.michiel.banking.entity.CustomerEntity;
 import com.michiel.banking.graphql.input.AccountInput;
 import com.michiel.banking.graphql.type.Account;
+import com.michiel.banking.mapper.AccountMapper;
 import com.michiel.banking.mapping.AccountMap;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.repository.CustomerRepository;
 import com.michiel.banking.service.AccountService;
-import com.michiel.banking.util.Filter;
+import com.michiel.banking.util.StreamUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -34,13 +35,16 @@ public class AccountServiceImpl implements AccountService {
   @Autowired
   private CustomerRepository customerRepository;
 
+  @Autowired
+  private AccountMapper accountMapper;
+
   public List<Account> getAccounts() {
-    return AccountMap.transform(this.accountRepository.findAll());
+    return this.accountMapper.transform(this.accountRepository.findAll());
   }
 
   public List<Account> getAccounts(Predicate<Account> predicate) {
     List<Account> accounts = getAccounts();
-    return Filter.filter(accounts, predicate);
+    return StreamUtil.filter(accounts, predicate);
   }
 
   public Account getAccountById(long id) throws NoSuchElementException {

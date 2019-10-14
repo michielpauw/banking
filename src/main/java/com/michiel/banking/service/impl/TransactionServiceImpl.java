@@ -9,11 +9,12 @@ import com.michiel.banking.mapping.TransactionMap;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.TransactionRepository;
 import com.michiel.banking.service.TransactionService;
-import com.michiel.banking.util.Filter;
+import com.michiel.banking.util.StreamUtil;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,12 +89,17 @@ public class TransactionServiceImpl implements TransactionService {
     return (x) -> toFilter.test(x) && fromFilter.test(x) && typeFilter.test(x) && amountFilter.test(x);
   }
 
+  public long getTotalDepositValue() {
+    List<Transaction> transactions = getTransactions(this.getTransactionPredicate(null, null, TransactionType.DEPOSIT, null, null));
+    return transactions.stream().collect(Collectors.summingLong(Transaction::getAmount));
+  }
+
   public List<Transaction> getTransactions() {
     return TransactionMap.transform(transactionRepository.findAll());
   }
 
   public List<Transaction> getTransactions(Predicate<Transaction> predicate) {
     List<Transaction> transactions = getTransactions();
-    return Filter.filter(transactions, predicate);
+    return StreamUtil.filter(transactions, predicate);
   }
 }
