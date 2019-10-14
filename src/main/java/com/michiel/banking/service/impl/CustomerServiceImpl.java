@@ -2,6 +2,8 @@ package com.michiel.banking.service.impl;
 
 import com.michiel.banking.entity.AccountEntity;
 import com.michiel.banking.entity.CustomerEntity;
+import com.michiel.banking.exception.BankingException;
+import com.michiel.banking.exception.ErrorCode;
 import com.michiel.banking.graphql.input.CustomerInput;
 import com.michiel.banking.graphql.type.Account;
 import com.michiel.banking.graphql.type.Customer;
@@ -13,7 +15,6 @@ import com.michiel.banking.repository.CustomerRepository;
 import com.michiel.banking.service.CustomerService;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,29 +56,27 @@ public class CustomerServiceImpl implements CustomerService {
   public Customer addAccountToCustomer(
       long customerId,
       long accountId)
-      throws NoSuchElementException
+      throws BankingException
   {
-    Optional<AccountEntity> accountOptional = accountRepository.findById(accountId);
-    Optional<CustomerEntity> customerOptional = customerRepository.findById(customerId);
-    if (accountOptional.isPresent() && customerOptional.isPresent()) {
-      CustomerEntity customer = customerOptional.get();
-      if (customer.getAccounts().contains(accountOptional.get())) {
-        return this.customerMapper.transform(customer);
-      }
-      customer.getAccounts().add(accountOptional.get());
-      return this.customerMapper.transform(customerRepository.save(customer));
-    } else {
-      throw new NoSuchElementException();
+    CustomerEntity customer = getCustomerEntityById(customerId);
+    AccountEntity account = accountRepository
+        .findById(accountId)
+        .orElseThrow(() -> new BankingException(ErrorCode.GENERIC_ERROR, "Account with id=" + accountId + " not found."));
+    if (customer.getAccounts().contains(account)) {
+      return this.customerMapper.transform(customer);
     }
+    customer.getAccounts().add(account);
+    return this.customerMapper.transform(customerRepository.save(customer));
   }
 
-  public Customer getCustomerById(long id) throws NoSuchElementException {
+  public CustomerEntity getCustomerEntityById(long id) throws BankingException {
     Optional<CustomerEntity> customerEntity = customerRepository.findById(id);
-    if (customerEntity.isPresent()) {
-      return this.customerMapper.transform(customerEntity.get());
-    } else {
-      throw new NoSuchElementException();
-    }
+    return customerEntity.orElseThrow(() -> new BankingException(
+        ErrorCode.GENERIC_ERROR, "Customer with id=" + id + " not found."));
+  }
+
+  public Customer getCustomerById(long id) throws BankingException {
+    return this.customerMapper.transform(getCustomerEntityById(id));
   }
 
   public List<Account> getCustomerAccounts(long id) {

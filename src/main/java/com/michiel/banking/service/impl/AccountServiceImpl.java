@@ -4,6 +4,8 @@ import com.michiel.banking.entity.AccountEntity;
 import com.michiel.banking.entity.AccountType;
 import com.michiel.banking.entity.BankEntity;
 import com.michiel.banking.entity.CustomerEntity;
+import com.michiel.banking.exception.BankingException;
+import com.michiel.banking.exception.ErrorCode;
 import com.michiel.banking.graphql.input.AccountInput;
 import com.michiel.banking.graphql.type.Account;
 import com.michiel.banking.mapper.AccountMapper;
@@ -14,7 +16,6 @@ import com.michiel.banking.service.AccountService;
 import com.michiel.banking.util.StreamUtil;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +47,15 @@ public class AccountServiceImpl implements AccountService {
     return StreamUtil.filter(accounts, predicate);
   }
 
-  public Account getAccountById(long id) throws NoSuchElementException {
+  public AccountEntity getAccountEntityById(long id) throws BankingException {
     Optional<AccountEntity> accountEntity = accountRepository.findById(id);
-    if (accountEntity.isPresent()) {
-      return this.accountMapper.transform(accountEntity.get());
-    } else {
-      throw new NoSuchElementException();
-    }
+    return accountEntity.orElseThrow(() -> new BankingException(
+        ErrorCode.GENERIC_ERROR, "The account with id " + id + " does not exist."));
+  }
+
+  public Account getAccountById(long id) throws BankingException {
+    AccountEntity entity = getAccountEntityById(id);
+    return this.accountMapper.transform(entity);
   }
 
   public Predicate<Account> getAccountPredicate(Long minimum, Long maximum, AccountType type) {
@@ -64,7 +67,7 @@ public class AccountServiceImpl implements AccountService {
     return (x) -> typeFilter.test(x) && amountFilter.test(x);
   }
 
-  public AccountEntity addCustomerToAccount(AccountEntity account, CustomerEntity customer) {
+  private AccountEntity addCustomerToAccount(AccountEntity account, CustomerEntity customer) {
     List<CustomerEntity> customers = account.getCustomers();
     if (customers != null) {
       customers.add(customer);
@@ -85,20 +88,19 @@ public class AccountServiceImpl implements AccountService {
     return  account;
   }
 
-  public Account addAccount(AccountInput input) throws NoSuchElementException
+  public Account addAccount(AccountInput input) throws BankingException
   {
-    Optional<BankEntity> bankOptional = bankRepository.findById(input.getBankId());
-    Optional<CustomerEntity> customerOptional = customerRepository.findById(input.getCustomerId());
-    if (bankOptional.isPresent() && customerOptional.isPresent()) {
-      CustomerEntity customer = customerOptional.get();
-      AccountEntity accountEntity = new AccountEntity();
-      accountEntity.setBank(bankOptional.get());
-      accountEntity.setType(input.getType());
-      accountEntity = addCustomerToAccount(accountEntity, customer);
-      return this.accountMapper.transform(accountRepository.save(accountEntity));
-    } else {
-      throw new NoSuchElementException();
-    }
+    CustomerEntity customer = customerRepository
+        .findById(input.getCustomerId())
+        .orElseThrow(() -> new BankingException(ErrorCode.GENERIC_ERROR, "Customer with id=" + input.getCustomerId() + " not found."));
+    BankEntity bank = bankRepository
+        .findById(input.getBankId())
+        .orElseThrow(() -> new BankingException(ErrorCode.GENERIC_ERROR, "Bank with id=" + input.getBankId() + " not found."));
+    AccountEntity accountEntity = new AccountEntity();
+    accountEntity.setBank(bank);
+    accountEntity.setType(input.getType());
+    accountEntity = addCustomerToAccount(accountEntity, customer);
+    return this.accountMapper.transform(accountRepository.save(accountEntity));
   }
 
   public List<Long> getCustomerIds(long id) {

@@ -1,13 +1,14 @@
 package com.michiel.banking.service.impl;
 
-import com.michiel.banking.mapper.BankMapper;
 import com.michiel.banking.entity.BankEntity;
-import com.michiel.banking.repository.BankRepository;
+import com.michiel.banking.exception.BankingException;
+import com.michiel.banking.exception.ErrorCode;
 import com.michiel.banking.graphql.input.BankInput;
 import com.michiel.banking.graphql.type.Bank;
+import com.michiel.banking.mapper.BankMapper;
+import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.service.BankService;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,12 +41,13 @@ public class BankServiceImpl implements BankService {
     return this.bankMapper.transform(bankRepository.findAll());
   }
 
-  public Bank getBankById(long id) throws NoSuchElementException {
+  public BankEntity getBankEntityById(long id) throws BankingException {
     Optional<BankEntity> bankEntity = bankRepository.findById(id);
-    if (bankEntity.isPresent()) {
-      return this.bankMapper.transform(bankEntity.get());
-    } else {
-      throw new NoSuchElementException();
-    }
+    return bankEntity.orElseThrow(() -> new BankingException(
+        ErrorCode.GENERIC_ERROR, "The bank with id=" + id + " does not exist."));
+  }
+
+  public Bank getBankById(long id) throws BankingException {
+    return this.bankMapper.transform(getBankEntityById(id));
   }
 }

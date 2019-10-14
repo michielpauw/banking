@@ -8,6 +8,7 @@ import com.michiel.banking.entity.AccountEntity;
 import com.michiel.banking.entity.AccountType;
 import com.michiel.banking.entity.BankEntity;
 import com.michiel.banking.entity.CustomerEntity;
+import com.michiel.banking.exception.BankingException;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.repository.CustomerRepository;
@@ -70,14 +71,14 @@ public class AccountServiceTest {
   }
 
   @Test
-  public void addAccountShouldThrowExceptionIfNoBankWithIdFound() {
+  public void addAccountShouldThrowExceptionIfNoBankWithIdFound() throws BankingException {
     Mockito.when(this.bankRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
     thrown.expect(NoSuchElementException.class);
     this.accountService.addAccount(accountInput);
   }
 
   @Test
-  public void addAccountShouldReturnAccountIfAccountAndBankFound() {
+  public void addAccountShouldReturnAccountIfAccountAndBankFound() throws BankingException {
     Mockito.when(this.accountRepository.save(Mockito.any(AccountEntity.class))).thenReturn(accountEntity);
     Mockito.when(this.bankRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(bankEntity));
     Mockito.when(this.customerRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(customerEntity));
@@ -87,7 +88,7 @@ public class AccountServiceTest {
   }
 
   @Test
-  public void getAccountByIdShouldReturnAccountIfFound() {
+  public void getAccountByIdShouldReturnAccountIfFound() throws BankingException {
     Mockito.when(this.accountRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(accountEntity));
     final Account account = this.accountService.getAccountById(Mockito.anyLong());
     assertNotNull(account.getId());
@@ -95,7 +96,7 @@ public class AccountServiceTest {
   }
 
   @Test
-  public void getAccountByIdShouldThrowExceptionIfNotFound() {
+  public void getAccountByIdShouldThrowExceptionIfNotFound() throws BankingException {
     Mockito.when(this.accountRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
     thrown.expect(NoSuchElementException.class);
     this.accountService.getAccountById(Mockito.anyLong());

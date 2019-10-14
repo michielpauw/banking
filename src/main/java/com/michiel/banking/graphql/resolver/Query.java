@@ -3,6 +3,7 @@ package com.michiel.banking.graphql.resolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.michiel.banking.entity.AccountType;
 import com.michiel.banking.entity.TransactionType;
+import com.michiel.banking.exception.BankingException;
 import com.michiel.banking.graphql.type.Account;
 import com.michiel.banking.graphql.type.Bank;
 import com.michiel.banking.graphql.type.Customer;
@@ -30,7 +31,8 @@ public class Query implements GraphQLQueryResolver {
     this.transactionService = transactionService;
   }
 
-  public Customer customer(Long id, final DataFetchingEnvironment dataFetchingEnvironment) {
+  public Customer customer(Long id, final DataFetchingEnvironment dataFetchingEnvironment)
+      throws BankingException {
     final DataFetchingFieldSelectionSet selectionSet = dataFetchingEnvironment.getSelectionSet();
     final Customer customer = customerService.getCustomerById(id);
     if (selectionSet.get().getKeys().contains("accounts")) {
@@ -48,7 +50,7 @@ public class Query implements GraphQLQueryResolver {
     return customers;
   }
 
-  public Account account(Long id, final DataFetchingEnvironment dataFetchingEnvironment) {
+  public Account account(Long id, final DataFetchingEnvironment dataFetchingEnvironment) throws BankingException {
     final DataFetchingFieldSelectionSet selectionSet = dataFetchingEnvironment.getSelectionSet();
     final Account account = accountService.getAccountById(id);
     if (selectionSet.get().getKeys().contains("customerIds")) {
@@ -66,7 +68,7 @@ public class Query implements GraphQLQueryResolver {
     return accounts;
   }
 
-  public Bank bank(Long id) {
+  public Bank bank(Long id) throws BankingException {
     return bankService.getBankById(id);
   }
 

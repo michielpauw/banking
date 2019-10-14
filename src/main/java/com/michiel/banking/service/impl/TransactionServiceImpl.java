@@ -3,6 +3,8 @@ package com.michiel.banking.service.impl;
 import com.michiel.banking.entity.AccountEntity;
 import com.michiel.banking.entity.TransactionEntity;
 import com.michiel.banking.entity.TransactionType;
+import com.michiel.banking.exception.BankingException;
+import com.michiel.banking.exception.ErrorCode;
 import com.michiel.banking.graphql.input.TransactionInput;
 import com.michiel.banking.graphql.type.Transaction;
 import com.michiel.banking.mapper.TransactionMapper;
@@ -11,7 +13,6 @@ import com.michiel.banking.repository.TransactionRepository;
 import com.michiel.banking.service.TransactionService;
 import com.michiel.banking.util.StreamUtil;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -32,48 +33,42 @@ public class TransactionServiceImpl implements TransactionService {
   @Autowired
   private TransactionMapper transactionMapper;
 
-  public Transaction handleTransaction(TransactionInput input) {
+  public AccountEntity getAccountById(long id) throws BankingException {
+    Optional<AccountEntity> accountToOptional = accountRepository.findById(id);
+    return accountToOptional.orElseThrow(() -> new BankingException(ErrorCode.GENERIC_ERROR, "The account with id " + id + " does not exist."));
+  }
+
+  public Transaction handleTransaction(TransactionInput input) throws BankingException {
     if (input.getAmount() < 0) {
-      throw new IllegalArgumentException();
+      throw new BankingException(ErrorCode.INVALID_REQUEST, "Enter a non-negative transaction amount.");
     }
-    Optional<AccountEntity> accountToOptional = accountRepository.findById(input.getToId());
-    if (!(accountToOptional.isPresent())) {
-      throw new NoSuchElementException();
-    }
-    TransactionEntity entity = new TransactionEntity();
-    AccountEntity toAccount = accountToOptional.get();
-    entity.setAmount(input.getAmount());
+    AccountEntity toAccount = getAccountById(input.getToId());
+    TransactionEntity entity = this.transactionMapper.transform(input);
     entity.setToAccount(toAccount);
-    entity.setType(input.getType());
     if (input.getType() == TransactionType.DEPOSIT) {
       return (depositTransaction(input, entity, toAccount));
     }
     if (input.getFromId() != null) {
       return transferTransaction(input, entity, toAccount);
     }
-    throw new IllegalArgumentException();
+    throw new BankingException(ErrorCode.INVALID_REQUEST, "The account you transfer from is required.");
   }
 
-  public Transaction transferTransaction(TransactionInput input, TransactionEntity entity, AccountEntity toAccount) {
-    Optional<AccountEntity> accountFromOptional = accountRepository.findById(input.getFromId());
-    if (accountFromOptional.isPresent()) {
-      AccountEntity fromAccount = accountFromOptional.get();
-      entity.setSuccess(false);
-      entity.setFromAccount(fromAccount);
-      if (fromAccount.getBalance() > input.getAmount()) {
-        toAccount.setBalance(toAccount.getBalance() + input.getAmount());
-        fromAccount.setBalance(fromAccount.getBalance() - input.getAmount());
-        accountRepository.save(fromAccount);
-        accountRepository.save(toAccount);
-        entity.setSuccess(true);
-      }
-      return this.transactionMapper.transform(transactionRepository.save(entity));
-    } else {
-      throw new NoSuchElementException();
+  private Transaction transferTransaction(TransactionInput input, TransactionEntity entity, AccountEntity toAccount) throws BankingException {
+    AccountEntity fromAccount = getAccountById(input.getFromId());
+    entity.setSuccess(false);
+    entity.setFromAccount(fromAccount);
+    if (fromAccount.getBalance() > input.getAmount()) {
+      toAccount.setBalance(toAccount.getBalance() + input.getAmount());
+      fromAccount.setBalance(fromAccount.getBalance() - input.getAmount());
+      accountRepository.save(fromAccount);
+      accountRepository.save(toAccount);
+      entity.setSuccess(true);
     }
+    return this.transactionMapper.transform(transactionRepository.save(entity));
   }
 
-  public Transaction depositTransaction(TransactionInput input, TransactionEntity entity, AccountEntity toAccount) {
+  private Transaction depositTransaction(TransactionInput input, TransactionEntity entity, AccountEntity toAccount) {
     entity.setSuccess(true);
     toAccount.setBalance(toAccount.getBalance() + input.getAmount());
     accountRepository.save(toAccount);

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import com.michiel.banking.entity.BankEntity;
+import com.michiel.banking.exception.BankingException;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.graphql.input.BankInput;
 import com.michiel.banking.graphql.type.Bank;
@@ -80,7 +81,7 @@ public class BankServiceTest {
   }
 
   @Test
-  public void getBankByIdShouldReturnBank() {
+  public void getBankByIdShouldReturnBank() throws BankingException {
     Mockito.when(this.bankRepository.findById(anyLong())).thenReturn(Optional.of(bankEntity));
     Bank bank = bankServiceImpl.getBankById(1);
     assertNotNull(bank);
@@ -88,7 +89,7 @@ public class BankServiceTest {
   }
 
   @Test
-  public void getBankByIdShouldThrowException() {
+  public void getBankByIdShouldThrowException() throws BankingException {
     Mockito.when(this.bankRepository.findById(anyLong())).thenReturn(Optional.empty());
     thrown.expect(NoSuchElementException.class);
     this.bankServiceImpl.getBankById(Mockito.anyLong());

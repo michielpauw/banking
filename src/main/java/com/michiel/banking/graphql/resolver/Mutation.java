@@ -1,6 +1,7 @@
 package com.michiel.banking.graphql.resolver;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
+import com.michiel.banking.exception.BankingException;
 import com.michiel.banking.graphql.input.BankInput;
 import com.michiel.banking.graphql.input.CustomerInput;
 import com.michiel.banking.graphql.input.AccountInput;
@@ -38,7 +39,7 @@ public class Mutation implements GraphQLMutationResolver {
     return customerService.addCustomers(input);
   }
 
-  public Account account(AccountInput input) {
+  public Account account(AccountInput input) throws BankingException {
     return accountService.addAccount(input);
   }
 
@@ -46,7 +47,7 @@ public class Mutation implements GraphQLMutationResolver {
     return bankService.addBank(input);
   }
 
-  public Transaction transaction(TransactionInput input) {
+  public Transaction transaction(TransactionInput input) throws BankingException {
     return transactionService.handleTransaction(input);
   }
 }
