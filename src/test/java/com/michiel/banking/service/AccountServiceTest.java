@@ -9,18 +9,17 @@ import com.michiel.banking.entity.AccountType;
 import com.michiel.banking.entity.BankEntity;
 import com.michiel.banking.entity.CustomerEntity;
 import com.michiel.banking.exception.BankingException;
+import com.michiel.banking.graphql.input.AccountInput;
+import com.michiel.banking.graphql.type.Account;
+import com.michiel.banking.mapper.AccountMapper;
 import com.michiel.banking.repository.AccountRepository;
 import com.michiel.banking.repository.BankRepository;
 import com.michiel.banking.repository.CustomerRepository;
-import com.michiel.banking.graphql.input.AccountInput;
-import com.michiel.banking.graphql.type.Account;
 import com.michiel.banking.service.impl.AccountServiceImpl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Rule;
@@ -56,10 +55,14 @@ public class AccountServiceTest {
   @Mock
   private AccountInput accountInput;
 
+  @Mock
+  private AccountMapper accountMapper;
+
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
   private AccountEntity accountEntity;
+  private Account account;
 
   @Before
   public void testPreparation() {
@@ -68,12 +71,15 @@ public class AccountServiceTest {
     accountEntity.setType(AccountType.CHILD);
     accountEntity.setBank(bankEntity);
     accountEntity.setCustomers(new ArrayList<>(Arrays.asList(customerEntity)));
+    account = new Account();
+    account.setId(accountEntity.getId());
+    account.setType(accountEntity.getType());
+    Mockito.when(this.accountMapper.transform(Mockito.any(AccountEntity.class))).thenReturn(account);
   }
 
   @Test
   public void addAccountShouldThrowExceptionIfNoBankWithIdFound() throws BankingException {
-    Mockito.when(this.bankRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
-    thrown.expect(NoSuchElementException.class);
+    thrown.expect(BankingException.class);
     this.accountService.addAccount(accountInput);
   }
 
@@ -92,19 +98,19 @@ public class AccountServiceTest {
     Mockito.when(this.accountRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(accountEntity));
     final Account account = this.accountService.getAccountById(Mockito.anyLong());
     assertNotNull(account.getId());
-    assertNotNull(account.getType());
   }
 
   @Test
   public void getAccountByIdShouldThrowExceptionIfNotFound() throws BankingException {
     Mockito.when(this.accountRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
-    thrown.expect(NoSuchElementException.class);
+    thrown.expect(BankingException.class);
     this.accountService.getAccountById(Mockito.anyLong());
   }
 
   @Test
   public void getAccountsNoArgsShouldReturnIterable() {
     Mockito.when(this.accountRepository.findAll()).thenReturn(Arrays.asList(accountEntity));
+    Mockito.when(this.accountMapper.transform(Mockito.anyList())).thenReturn(Arrays.asList(account));
     final Iterable<Account> accounts = this.accountService.getAccounts();
     Iterator<Account> iterator = accounts.iterator();
     assertNotNull(accounts);
@@ -118,35 +124,6 @@ public class AccountServiceTest {
     final Iterable<Account> accounts = this.accountService.getAccounts();
     Iterator<Account> iterator = accounts.iterator();
     assertNotNull(accounts);
-    assertFalse(iterator.hasNext());
-  }
-
-  @Test
-  public void getFilteredAccountsShouldReturnIterable() {
-    AccountEntity account1 = new AccountEntity();
-    AccountEntity shouldPass1 = new AccountEntity();
-    AccountEntity account3 = new AccountEntity();
-    AccountEntity account4 = new AccountEntity();
-    AccountEntity shouldPass2 = new AccountEntity();
-
-    account1.setBalance((long)100);
-    account1.setType(AccountType.CHILD);
-    shouldPass1.setBalance((long)200);
-    shouldPass1.setType(AccountType.CHILD);
-    account3.setBalance((long)300);
-    account3.setType(AccountType.CHILD);
-    account4.setBalance((long)200);
-    account4.setType(AccountType.INVESTMENT);
-    shouldPass2.setBalance((long)200);
-    shouldPass2.setType(AccountType.CHILD);
-
-    List<AccountEntity> accounts = new ArrayList<>(Arrays.asList(account1, shouldPass1, account3, account4, shouldPass2));
-    Mockito.when(this.accountRepository.findAll()).thenReturn(accounts);
-    final Iterable<Account> tripleFilteredAccounts = this.accountService.getAccounts(this.accountService.getAccountPredicate(200L, 250L, AccountType.CHILD));
-    Iterator<Account> iterator = tripleFilteredAccounts.iterator();
-    assertNotNull(tripleFilteredAccounts);
-    assertEquals(shouldPass1.getId(), (long)iterator.next().getId());
-    assertEquals(shouldPass2.getId(), (long)iterator.next().getId());
     assertFalse(iterator.hasNext());
   }
 }

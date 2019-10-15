@@ -50,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
   public AccountEntity getAccountEntityById(long id) throws BankingException {
     Optional<AccountEntity> accountEntity = accountRepository.findById(id);
     return accountEntity.orElseThrow(() -> new BankingException(
-        ErrorCode.GENERIC_ERROR, "The account with id " + id + " does not exist."));
+        ErrorCode.GENERIC_ERROR, "Account with id=" + id + " does not exist."));
   }
 
   public Account getAccountById(long id) throws BankingException {
@@ -67,7 +67,7 @@ public class AccountServiceImpl implements AccountService {
     return (x) -> typeFilter.test(x) && amountFilter.test(x);
   }
 
-  private AccountEntity addCustomerToAccount(AccountEntity account, CustomerEntity customer) {
+  private void addCustomerToAccount(AccountEntity account, CustomerEntity customer) {
     List<CustomerEntity> customers = account.getCustomers();
     if (customers != null) {
       customers.add(customer);
@@ -85,7 +85,6 @@ public class AccountServiceImpl implements AccountService {
       accounts.add(account);
     }
     accountRepository.save(account);
-    return  account;
   }
 
   public Account addAccount(AccountInput input) throws BankingException
@@ -99,7 +98,7 @@ public class AccountServiceImpl implements AccountService {
     AccountEntity accountEntity = new AccountEntity();
     accountEntity.setBank(bank);
     accountEntity.setType(input.getType());
-    accountEntity = addCustomerToAccount(accountEntity, customer);
+    addCustomerToAccount(accountEntity, customer);
     return this.accountMapper.transform(accountRepository.save(accountEntity));
   }
 
