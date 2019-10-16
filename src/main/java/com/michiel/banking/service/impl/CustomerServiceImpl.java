@@ -5,7 +5,6 @@ import com.michiel.banking.entity.CustomerEntity;
 import com.michiel.banking.exception.BankingException;
 import com.michiel.banking.exception.ErrorCode;
 import com.michiel.banking.graphql.input.CustomerInput;
-import com.michiel.banking.graphql.type.Account;
 import com.michiel.banking.graphql.type.Customer;
 import com.michiel.banking.mapper.AccountMapper;
 import com.michiel.banking.mapper.CustomerMapper;
@@ -77,9 +76,5 @@ public class CustomerServiceImpl implements CustomerService {
 
   public Customer getCustomerById(long id) throws BankingException {
     return this.customerMapper.transform(getCustomerEntityById(id));
-  }
-
-  public List<Account> getCustomerAccounts(long id) {
-    return this.accountMapper.transform(customerRepository.findByCustomerId(id));
   }
 }

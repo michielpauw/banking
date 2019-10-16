@@ -105,4 +105,8 @@ public class AccountServiceImpl implements AccountService {
   public List<Long> getCustomerIds(long id) {
     return accountRepository.findByAccountId(id);
   }
+
+  public List<Account> getCustomerAccounts(long id) {
+    return this.accountMapper.transform(accountRepository.findByCustomerId(id));
+  }
 }

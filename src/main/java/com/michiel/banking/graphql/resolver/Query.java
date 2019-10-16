@@ -4,6 +4,7 @@ import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.michiel.banking.entity.AccountType;
 import com.michiel.banking.entity.TransactionType;
 import com.michiel.banking.exception.BankingException;
+import com.michiel.banking.graphql.fetcher.AccountFetcher;
 import com.michiel.banking.graphql.type.Account;
 import com.michiel.banking.graphql.type.Bank;
 import com.michiel.banking.graphql.type.Customer;
@@ -22,6 +23,7 @@ public class Query implements GraphQLQueryResolver {
   private final BankService bankService;
   private final CustomerService customerService;
   private final TransactionService transactionService;
+  private final AccountFetcher accountFetcher;
 
   public Query(final AccountService accountService, final BankService bankService,
       final CustomerService customerService, final TransactionService transactionService) {
@@ -29,6 +31,7 @@ public class Query implements GraphQLQueryResolver {
     this.bankService = bankService;
     this.customerService = customerService;
     this.transactionService = transactionService;
+    this.accountFetcher = new AccountFetcher(accountService);
   }
 
   public Customer customer(Long id, final DataFetchingEnvironment dataFetchingEnvironment)
@@ -36,7 +39,7 @@ public class Query implements GraphQLQueryResolver {
     final DataFetchingFieldSelectionSet selectionSet = dataFetchingEnvironment.getSelectionSet();
     final Customer customer = customerService.getCustomerById(id);
     if (selectionSet.get().getKeys().contains("accounts")) {
-      customer.setAccounts(customerService.getCustomerAccounts(id));
+      customer.setAccounts(accountFetcher.accountsByCustomerId(customer.getId(), selectionSet.getField("accounts").getSelectionSet()));
     }
     return customer;
   }
@@ -45,7 +48,7 @@ public class Query implements GraphQLQueryResolver {
     final DataFetchingFieldSelectionSet selectionSet = dataFetchingEnvironment.getSelectionSet();
     final List<Customer> customers = customerService.getCustomers();
     if (selectionSet.get().getKeys().contains("accounts")) {
-      customers.forEach(customer -> customer.setAccounts(customerService.getCustomerAccounts(customer.getId())));
+      customers.forEach(customer -> customer.setAccounts(accountFetcher.accountsByCustomerId(customer.getId(), selectionSet.getField("accounts").getSelectionSet())));
     }
     return customers;
   }
@@ -59,6 +62,7 @@ public class Query implements GraphQLQueryResolver {
     return account;
   }
 
+
   public List<Account> accounts(Long min, Long max, AccountType type, final DataFetchingEnvironment dataFetchingEnvironment) {
     final DataFetchingFieldSelectionSet selectionSet = dataFetchingEnvironment.getSelectionSet();
     final List<Account> accounts = accountService.getAccounts(accountService.getAccountPredicate(min, max, type));
@@ -68,12 +72,22 @@ public class Query implements GraphQLQueryResolver {
     return accounts;
   }
 
-  public Bank bank(Long id) throws BankingException {
-    return bankService.getBankById(id);
+  public Bank bank(Long id, final DataFetchingEnvironment dataFetchingEnvironment) throws BankingException {
+    final DataFetchingFieldSelectionSet selectionSet = dataFetchingEnvironment.getSelectionSet();
+    Bank bank = bankService.getBankById(id);
+    if (selectionSet.get().getKeys().contains("accounts")) {
+      bank.setAccounts(accountFetcher.accountsByBankId(bank.getAccounts(), selectionSet.getField("accounts").getSelectionSet()));
+    }
+    return bank;
   }
 
-  public List<Bank> banks() {
-    return bankService.getBanks();
+  public List<Bank> banks(final DataFetchingEnvironment dataFetchingEnvironment) {
+    final DataFetchingFieldSelectionSet selectionSet = dataFetchingEnvironment.getSelectionSet();
+    List<Bank> banks = bankService.getBanks();
+    if (selectionSet.get().getKeys().contains("accounts")) {
+      banks.forEach(bank -> bank.setAccounts(accountFetcher.accountsByBankId(bank.getAccounts(), selectionSet.getField("accounts").getSelectionSet())));
+    }
+    return banks;
   }
 
   public List<Transaction> transactions(Long toId, Long fromId, TransactionType type, Long minAmount, Long maxAmount) {

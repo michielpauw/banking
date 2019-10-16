@@ -17,4 +17,5 @@ public interface AccountService {
   List<Account> getAccounts(Predicate<Account> predicate);
   AccountEntity getAccountEntityById(long id) throws BankingException;
   Predicate<Account> getAccountPredicate(Long minimum, Long maximum, AccountType type);
+  List<Account> getCustomerAccounts(long id);
 }
