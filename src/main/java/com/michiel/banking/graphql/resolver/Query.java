@@ -94,6 +94,10 @@ public class Query implements GraphQLQueryResolver {
     return transactionService.getTransactions(transactionService.getTransactionPredicate(toId, fromId, type, minAmount, maxAmount));
   }
 
+  public Transaction transaction(Long id) throws BankingException {
+    return transactionService.getTransactionById(id);
+  }
+
   public Long totalTransactions() {
     return transactionService.getTotalDepositValue();
   }

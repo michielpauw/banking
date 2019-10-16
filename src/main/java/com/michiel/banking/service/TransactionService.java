@@ -16,4 +16,5 @@ public interface TransactionService {
   long getTotalDepositValue();
   Predicate<Transaction> getTransactionPredicate(Long toId, Long fromId, TransactionType type,
       Long minAmount, Long maxAmount);
+  Transaction getTransactionById(long id) throws BankingException;
 }

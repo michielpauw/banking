@@ -33,6 +33,13 @@ public class TransactionServiceImpl implements TransactionService {
   @Autowired
   private TransactionMapper transactionMapper;
 
+  public Transaction getTransactionById(long id) throws BankingException {
+    Optional<TransactionEntity> transactionOptional = transactionRepository.findById(id);
+    return transactionMapper
+        .transform(transactionOptional
+            .orElseThrow(() -> new BankingException(ErrorCode.GENERIC_ERROR, "The transaction with id " + id + " does not exist.")));
+  }
+
   public AccountEntity getAccountById(long id) throws BankingException {
     Optional<AccountEntity> accountToOptional = accountRepository.findById(id);
     return accountToOptional.orElseThrow(() -> new BankingException(ErrorCode.GENERIC_ERROR, "The account with id " + id + " does not exist."));
