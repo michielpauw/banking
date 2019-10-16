@@ -93,4 +93,8 @@ public class Query implements GraphQLQueryResolver {
   public List<Transaction> transactions(Long toId, Long fromId, TransactionType type, Long minAmount, Long maxAmount) {
     return transactionService.getTransactions(transactionService.getTransactionPredicate(toId, fromId, type, minAmount, maxAmount));
   }
+
+  public Long totalTransactions() {
+    return transactionService.getTotalDepositValue();
+  }
 }
